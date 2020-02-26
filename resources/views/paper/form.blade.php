@@ -316,7 +316,7 @@
                         }
 
 
-                        helper.swal.loading({
+                        utils.swal.loading({
                             'title': '数据提交',
                             'text': '正在保存数据，请稍候',
                         })
@@ -333,9 +333,9 @@
                             data: data,
                             type: 'POST',
                             success: function(response){
-                                helper.swal.close()
+                                utils.swal.close()
                                 if(response.status=='failed'){
-                                    return helper.swal.error(response.message)
+                                    return utils.swal.error(response.message)
                                 }
                                 $.pjax({ url: paper.urls.paper_list, container: '#pjax-container' });
                             }
@@ -367,7 +367,7 @@
 
 
 
-        var action_url = "{{ $data['id']!=null ? route('exams.paper.update', ['id'=>$data['id'], 'gradation'=> $data['gradation']]) : route('exams.paper.store', ['gradation'=> $data['gradation']]) }}"
+        var action_url = "{{ $data['id']!=null ? route('exams.paper.update', ['paper'=>$data['id'], 'gradation'=> $data['gradation']]) : route('exams.paper.store', ['gradation'=> $data['gradation']]) }}"
         paper.parameters(data)
             .formAttributes({
                 action_url: action_url,

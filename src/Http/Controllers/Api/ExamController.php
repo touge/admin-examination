@@ -11,8 +11,11 @@ namespace Touge\AdminExamination\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Touge\AdminExamination\Facades\Exam;
-use Touge\AdminExamination\Facades\Paper;
+
+use Touge\AdminExamination\Facades\Api\Exam;
+use Touge\AdminExamination\Facades\Api\Paper;
+
+
 use Touge\AdminExamination\Http\Controllers\BaseApiController;
 
 /**
@@ -68,24 +71,6 @@ class ExamController extends BaseApiController
             'filter'=> $request->get('filter', 'all')
         ];
         $data= Exam::fetch_list($options);
-        return $this->success($data);
-    }
-
-    /**
-     * 考试
-     * @param $uuid
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function uuid($uuid): JsonResponse
-    {
-        $paper_questions= [];
-        $paper= Exam::paper($uuid, 'alias');
-        if($paper)
-        {
-            $paper_questions= Exam::paper_questions($paper['id'], false);
-        }
-
-        $data= ['paper'=>$paper, 'questions'=>$paper_questions];
         return $this->success($data);
     }
 }

@@ -6,7 +6,7 @@
  * Time: 17:00
  */
 
-namespace Touge\AdminExamination\Facades;
+namespace Touge\AdminExamination\Facades\Api;
 
 use Illuminate\Support\Facades\Facade;
 
@@ -22,7 +22,7 @@ class Exam extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'exam';
+        return 'api_exam';
     }
 
 }

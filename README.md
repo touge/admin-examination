@@ -3,7 +3,6 @@ laravel-admin extension
 
 
 依赖：
-touge/laravel-admin-common
 touge/laravel-admin-overwrite
 
 并依赖：

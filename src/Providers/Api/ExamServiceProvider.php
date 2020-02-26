@@ -21,7 +21,7 @@ class ExamServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('exam', function($app){
+        $this->app->singleton('api_exam', function($app){
             return new ExamService($app);
         });
     }

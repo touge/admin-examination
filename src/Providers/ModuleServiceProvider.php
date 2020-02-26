@@ -4,11 +4,16 @@ namespace Touge\AdminExamination\Providers;
 
 use Encore\Admin\Admin;
 use Illuminate\Support\ServiceProvider;
-use Touge\AdminExamination\Providers\Api\CorrectionServiceProvider;
-use Touge\AdminExamination\Providers\Api\ExamServiceProvider;
-use Touge\AdminExamination\Providers\Api\MyServiceProvider;
 use Touge\AdminExamination\Supports\AdminExamination;
 use Illuminate\Support\Facades\Route;
+
+
+use Touge\AdminExamination\Providers\Api\CorrectionServiceProvider as ApiCorrectionServiceProvider;
+use Touge\AdminExamination\Providers\Api\ExamServiceProvider as ApiExamServiceProvider;
+use Touge\AdminExamination\Providers\Api\MyServiceProvider as ApiMyServiceProvider;
+use Touge\AdminExamination\Providers\Api\PaperServiceProvider as ApiPaperServiceProvider;
+use Touge\AdminExamination\Providers\Api\PaperExamServiceProvider as ApiPaperExamServiceProvider;
+
 
 class ModuleServiceProvider extends ServiceProvider
 {
@@ -42,6 +47,7 @@ class ModuleServiceProvider extends ServiceProvider
 
             Admin::js('vendor/touge/admin-examination/vue.min.js');
             Admin::js('vendor/touge/admin-examination/vue.directive.js');
+            Admin::js('vendor/touge/admin-examination/utils.js');
             AdminExamination::routes(__DIR__ . '/../../routes/web.php');
             static::api_routes(__DIR__ . '/../../routes/api.php');
         });
@@ -81,12 +87,15 @@ class ModuleServiceProvider extends ServiceProvider
         /**
          * api
          */
-        $this->app->register(ExamServiceProvider::class);
-        $this->app->register(MyServiceProvider::class);
-        $this->app->register(CorrectionServiceProvider::class);
+        $this->app->register(ApiExamServiceProvider::class);
+        $this->app->register(ApiMyServiceProvider::class);
+        $this->app->register(ApiCorrectionServiceProvider::class);
 
-        $this->app->register(CustomerMemberServiceProvider::class);
-        $this->app->register(GroupPaperServiceProvider::class);
+
+
+        ///////
+        $this->app->register(ApiPaperServiceProvider::class);
+        $this->app->register(ApiPaperExamServiceProvider::class);
     }
 
     /**

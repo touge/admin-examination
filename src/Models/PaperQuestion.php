@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PaperQuestion extends BaseModel
 {
+    protected $table= 'touge_paper_questions';
     //
     protected $guarded= ['id'];
 

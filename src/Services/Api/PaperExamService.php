@@ -8,45 +8,81 @@
 
 namespace Touge\AdminExamination\Services\Api;
 
+//use App\Modules\Common\Services\BaseService;
+//use App\Modules\Exams\Facades\Paper;
+//use App\Modules\Exams\Models\ExamPaper;
+//use App\Modules\Exams\Models\ExamPaperExamQuestions;
+//use App\Modules\Exams\Models\ExamPaperExams;
+//use App\Modules\Exams\Models\ExamPaperQuestion;
+//use App\Modules\Exams\Models\ExamQuestion;
+//use App\Modules\Exams\Models\ExamQuestionAnalysis;
+//use App\Modules\Exams\Models\ExamQuestionAnswer;
+//use App\Modules\Exams\Models\ExamQuestionOption;
+//use App\Modules\Exams\Types\QuestionType;
+
+
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Touge\AdminExamination\Models\Paper;
+use Touge\AdminExamination\Models\PaperExamQuestions;
+use Touge\AdminExamination\Models\PaperExams;
+use Touge\AdminExamination\Models\PaperQuestion;
+use Touge\AdminExamination\Models\Question;
+use Touge\AdminExamination\Models\QuestionAnalysis;
+use Touge\AdminExamination\Models\QuestionAnswer;
+use Touge\AdminExamination\Models\QuestionOption;
 use Touge\AdminExamination\Services\BaseService;
+use Touge\AdminExamination\Types\QuestionType;
 
 /**
- * 学生试卷操作
+ * 学生考卷信息
  *
  * Class PaperExamService
  * @package App\Modules\Exams\Services
  */
-class CorrectionService extends BaseService
+class PaperExamService extends BaseService
 {
     /**
-     *
-     * 当前所属用户的已答题的试卷列表
+     * 获得试卷列表
      *
      * @param array $params
-     * @return Collection
+     * @return array
      */
-    public function paper_exam_list(array $params)
+    public function fetch_list(array $params)
     {
-        $selectFields= [
-            'pe.id' ,'pe.paper_id' ,'pe.user_id' ,'pe.user_name' ,'pe.marker_id' ,'pe.marker_name',
-            'pe.is_judge' ,'pe.updated_at as market_time' ,'pe.score',
+        $paginate= $params['paginate'];
 
-            'p.title as paper_title' , 'p.category_id', 'p.alias as paper_alias'
+        $paper_exams= PaperExams::orderBy('id','desc')
+            ->paginate($paginate['limit'], null, null, $paginate['current']);
+
+        $exam_paper_exams= collect($paper_exams->items());
+
+        $exam_paper_exams= $exam_paper_exams->map(function($item, $index){
+            return [
+                'id'=> $item['id'],
+                'paper_id'=> $item['paper_id'],
+                'user_id'=> $item['user_id'],
+                'user_name'=> $item['user_name'],
+                'paper_title'=> $item['paper']->title,
+                'status'=> $item['status'],
+                'is_judge'=> $item['is_judge'],
+                'start_time'=> $item['start_time'],
+                'end_time'=> $item['end_time'],
+                'score'=> $item['score'],
+            ];
+        });
+
+        $data= [
+            'paper_exams'=> $exam_paper_exams,
+            'paginate'=> [
+                'current'=> $paper_exams->currentPage(),
+                'total'=> $paper_exams->total()
+            ],
+            'categories'=> Paper::categories()->toArray(),
         ];
 
-        $query= DB::table('touge_paper_exams as pe');
-        $query->leftJoin('touge_papers as p', 'p.id' ,'=', 'pe.paper_id');
-        $query->leftJoin('customer_school_members as csm' ,'csm.id' ,'=' ,'pe.user_id');
-        $query->leftJoin('customer_schools as cs' ,'cs.id' ,'=' ,'csm.customer_school_id');
-        $query->where(['pe.user_id'=> $params['user_id']]);
-        $query->orderBy('pe.id' ,'DESC');
-        $query->select($selectFields);
-
-        return $query->get();
+        return $data;
     }
-
 
     /**
      * 获得一张考卷信息
@@ -59,32 +95,31 @@ class CorrectionService extends BaseService
     {
         $user= $params;
 
-
         /**
          * 用户试卷
          */
-        $paper_exam= ExamPaperExams::select(['id', 'user_id', 'paper_id', ])->findOrFail($exam_id);
+        $paper_exam= PaperExams::select(['id', 'user_id', 'paper_id', ])->findOrFail($exam_id);
 
         /**
          * 试卷模板
          */
-        $paper= ExamPaper::select(['id', 'alias', 'category_id', 'title', 'is_public', 'time_limit_enable', 'time_limit_value', 'pass_score', 'total_score'])->findOrFail($paper_exam->paper_id);
+        $paper= Paper::select(['id', 'alias', 'category_id', 'title', 'is_public', 'time_limit_enable', 'time_limit_value', 'pass_score', 'total_score'])->findOrFail($paper_exam->paper_id);
 
         /**
          * 试卷模板各题目分值
          */
-        $paper_question_score= ExamPaperQuestion::where(['paper_id'=>$paper_exam->paper_id])->get(['paper_id', 'question_id', 'score'])->pluck('score', 'question_id');
+        $paper_question_score= PaperQuestion::where(['paper_id'=>$paper_exam->paper_id])->get(['paper_id', 'question_id', 'score'])->pluck('score', 'question_id');
 
         /**
          * 用户试卷试题
          */
-        $paper_exam_questions= ExamPaperExamQuestions::where(['exam_id'=> $paper_exam->id])->get(['id', 'question_id', 'answer', 'is_judge', 'score']);
+        $paper_exam_questions= PaperExamQuestions::where(['exam_id'=> $paper_exam->id])->get(['id', 'question_id', 'answer', 'is_judge', 'score']);
         $paper_exam_questions= $paper_exam_questions->map(function($item, $index) use($paper_question_score) {
 
             /**
              * 当前题库中的试题信息
              */
-            $question= ExamQuestion::select('question as title', 'type')->findOrFail($item->question_id);
+            $question= Question::select('question as title', 'type')->findOrFail($item->question_id);
 
             /**
              * 试卷中的问题ID exam_paper_question.id
@@ -115,7 +150,7 @@ class CorrectionService extends BaseService
                 case QuestionType::SINGLE_CHOICE:
                 case QuestionType::MULTI_CHOICES:
                 case QuestionType::TRUE_FALSE:
-                    $question->options= ExamQuestionOption::where(['question_id'=> $item->question_id])->get(['id','is_answer','option']);
+                    $question->options= QuestionOption::where(['question_id'=> $item->question_id])->get(['id','is_answer','option']);
                     $question_exam_answer= $question->options->filter(function($item){
                         if($item->is_answer==1){
                             return $item->is_answer;
@@ -126,12 +161,12 @@ class CorrectionService extends BaseService
                     break;
                 case QuestionType::FILL:
                 case QuestionType::TEXT:
-                    $question->answers= ExamQuestionAnswer::where(['question_id'=> $item->question_id])->get(['id', 'answer']);
+                    $question->answers= QuestionAnswer::where(['question_id'=> $item->question_id])->get(['id', 'answer']);
                     $question->answer= $question->answers->pluck('answer');
                     break;
             }
 
-            $analyses= ExamQuestionAnalysis::where(['question_id'=> $item->question_id])->first(['id', 'analysis']);
+            $analyses= QuestionAnalysis::where(['question_id'=> $item->question_id])->first(['id', 'analysis']);
 
             $question->analyses= $analyses;
             return $question;
@@ -159,11 +194,11 @@ class CorrectionService extends BaseService
      * @param $id
      * @param array $params
      * @return array
-     * @throws \App\Modules\Common\ResponseFailedException
+     * @throws \Touge\AdminExamination\Exceptions\ResponseFailedException
      */
     public function update($id, array $params)
     {
-        $paper_exam= ExamPaperExams::findOrFail($id);
+        $paper_exam= PaperExams::findOrFail($id);
 
         $marker= $params['user'];
 
@@ -200,6 +235,17 @@ class CorrectionService extends BaseService
         return $params;
     }
 
+
+    /**
+     * 删除学生试卷
+     *
+     * @param $id
+     * @return int
+     */
+    public function destroy($id){
+        return PaperExams::destroy($id);
+    }
+
     /**
      *
      * 批量批改试卷
@@ -210,7 +256,7 @@ class CorrectionService extends BaseService
     protected function judge_update_batch(Collection $params): bool
     {
         foreach($params as $param) {
-            $update= ExamPaperExamQuestions::where([
+            $update= PaperExamQuestions::where([
                 'exam_id'=> $param['exam_id'],
                 'question_id'=> $param['question_id']
             ])

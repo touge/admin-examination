@@ -11,7 +11,7 @@ namespace Touge\AdminExamination\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Touge\AdminExamination\Facades\My;
+use Touge\AdminExamination\Facades\Api\My;
 use Touge\AdminExamination\Http\Controllers\BaseApiController;
 
 class MyController extends BaseApiController
@@ -25,14 +25,26 @@ class MyController extends BaseApiController
      */
     public function index(Request $request)
     {
-        $options= [
-            'paginate'=> $request->get('paginate', ['current'=> 1, 'limit'=> 5]),
-            'user'=> $this->user(),
-            'gradation'=> $request->get('gradation'),
-            'filter'=> $request->get('filter', 'all')
-        ];
+        $options= $this->options($request);
+
         $data= My::fetch_list($options);
+
         return $this->success($data);
+    }
+
+
+    /**
+     * @param Request $request
+     * @return array [user_id,custom_school_id:当前放入到院校订单中的学校ID，gradation_id: 当前学校的阶段,school_id: custom_school_id的原始数据源学校]
+     */
+    protected function options(Request $request){
+        return [
+            'user_id'=> $this->user()->id,
+            'custom_school_id'=> $this->user()->customer_school_id,
+            'gradation_id'=> $request->get('gradation_id'),
+            'school_id'=> $request->get('school_id'),
+            'paginate'=> $request->get('paginate', ['current'=> 1, 'limit'=> 5]),
+        ];
     }
 
 }

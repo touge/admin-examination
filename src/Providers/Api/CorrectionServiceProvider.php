@@ -27,7 +27,7 @@ class CorrectionServiceProvider extends ServiceProvider
     public function register()
     {
         //
-        $this->app->singleton('correction', function($app){
+        $this->app->singleton('api_correction', function($app){
             return new CorrectionService($app);
         });
     }

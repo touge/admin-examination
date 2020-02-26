@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class QuestionTagGroup extends Model
 {
-
+    protected $table= 'touge_question_tag_groups';
     /**
      * @return HasMany
      */

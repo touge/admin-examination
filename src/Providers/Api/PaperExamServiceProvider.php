@@ -2,17 +2,17 @@
 /**
  * Created by PhpStorm.
  * User: nick
- * Date: 2019-11-22
- * Time: 17:37
+ * Date: 2019-12-10
+ * Time: 19:20
  */
 
 namespace Touge\AdminExamination\Providers\Api;
 
 
 use Illuminate\Support\ServiceProvider;
-use Touge\AdminExamination\Services\Api\MyService;
+use Touge\AdminExamination\Services\Api\PaperExamService;
 
-class MyServiceProvider extends ServiceProvider
+class PaperExamServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -22,8 +22,8 @@ class MyServiceProvider extends ServiceProvider
     public function register()
     {
         //
-        $this->app->singleton('api_my', function($app){
-            return new MyService($app);
+        $this->app->singleton('api_paper_exam', function($app){
+            return new PaperExamService($app);
         });
     }
 }

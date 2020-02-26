@@ -6,7 +6,7 @@
  * Time: 19:18
  */
 
-namespace Touge\AdminExamination\Facades;
+namespace Touge\AdminExamination\Facades\Api;
 
 
 use Illuminate\Support\Facades\Facade;
@@ -25,6 +25,6 @@ class Correction extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'correction';
+        return 'api_correction';
     }
 }

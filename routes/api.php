@@ -9,26 +9,28 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Routing\Router;
 
-Route::get('gradation', 'GradationController@index')->name('gradation.index');
-Route::get('group/{group}/papers', 'GroupPaperController@papers')->name('group.papers');
+//Route::get('gradation', 'GradationController@index')->name('gradation.index');
+//Route::get('group/{group}/papers', 'GroupPaperController@papers')->name('group.papers');
 
 /**
- * 试卷信息
+ * 试卷分类及分组
+ */
+Route::post('category', 'CategoryController@index')->name('category.index');
+
+
+/**
+ * 试卷列表
  */
 Route::group([
     'prefix'=>'paper',
     'as'=>'paper.'
 ],function(Router $router){
-    /**
-     * 试卷分类及分组
-     */
-    Route::get('{gradation}/category', 'CategoryController@index')->name('category.index');
+    Route::post('', 'PaperController@index')->name('list');
 
     /**
-     * 试卷分组信息
+     * 通过alias获得试卷信息
      */
-    Route::post('user-groups', 'GroupController@user_groups')->name('group.user_groups');
-
+    $router->get('{uuid}','PaperController@uuid')->name('uuid');
 });
 
 
@@ -55,10 +57,6 @@ $router->group([
      */
     $router->post('save_questions', 'ExamController@save_questions')->name('save');
 
-    /**
-     * 通过alias获得试卷信息
-     */
-    $router->post('{uuid}','ExamController@uuid')->name('uuid');
 });
 
 /**
@@ -72,7 +70,7 @@ $router->group([
 });
 
 /**
- * 考试信息
+ * 批改试卷
  */
 $router->group([
     'prefix'=> 'correction',

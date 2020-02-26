@@ -1,35 +1,50 @@
 <?php
 /**
- *
- * 考试中心分组及分类交互API
- *
  * Created by PhpStorm.
  * User: nick
- * Date: 2019-12-31
- * Time: 19:50
+ * Date: 2020-02-25
+ * Time: 10:27
  */
 
 namespace Touge\AdminExamination\Http\Controllers\Api;
-
-
 use Illuminate\Http\Request;
+use Touge\AdminExamination\Facades\Api\Paper;
 use Touge\AdminExamination\Http\Controllers\BaseApiController;
 
 
-use Touge\AdminExamination\Facades\Api\Paper;
-
-class CategoryController extends BaseApiController
+class PaperController extends BaseApiController
 {
     /**
+     * 试卷列表
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $options= $this->options($request);
-        $data= Paper::categories($options)->pluck('name' ,'id');
-        return $this->success($data);
+        $data= Paper::fetch_list($options);
 
+        return $this->success($data);
+    }
+
+
+    /**
+     * 产生一个试卷
+     *
+     * @param $uuid
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function uuid($uuid)
+    {
+        $paper_questions= [];
+        $paper= Paper::uuid($uuid, 'alias');
+        if($paper)
+        {
+            $paper_questions= Paper::paper_questions($paper['id'], false);
+        }
+
+        $data= ['paper'=>$paper, 'questions'=>$paper_questions];
+        return $this->success($data);
     }
 
     /**

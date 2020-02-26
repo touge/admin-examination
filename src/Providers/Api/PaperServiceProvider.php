@@ -10,9 +10,9 @@ namespace Touge\AdminExamination\Providers\Api;
 
 
 use Illuminate\Support\ServiceProvider;
-use Touge\AdminExamination\Services\Api\MyService;
+use Touge\AdminExamination\Services\Api\PaperService;
 
-class MyServiceProvider extends ServiceProvider
+class PaperServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -21,9 +21,8 @@ class MyServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
-        $this->app->singleton('api_my', function($app){
-            return new MyService($app);
+        $this->app->singleton('api_paper', function($app){
+            return new PaperService($app);
         });
     }
 }
