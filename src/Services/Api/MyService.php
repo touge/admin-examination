@@ -30,7 +30,7 @@ class MyService extends BaseService
             'pe.id' ,'pe.paper_id' ,'pe.user_id' ,'pe.user_name' ,'pe.marker_id' ,'pe.marker_name',
             'pe.is_judge' ,'pe.updated_at as market_time' ,'pe.score',
 
-            'p.alias as paper_alias', 'p.title as paper_title' , 'p.category_id' ,'p.time_limit_value'
+            'p.alias as paper_alias', 'p.title as paper_title' , 'p.category_id' ,'p.time_limit_value', 'p.question_number', 'p.total_score'
         ];
 
         $query= DB::table('touge_paper_exams as pe');

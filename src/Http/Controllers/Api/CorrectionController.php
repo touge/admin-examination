@@ -28,7 +28,7 @@ class CorrectionController extends BaseApiController
     protected function options(Request $request){
         return [
             'user_id'=> $this->user()->id,
-            'custom_school_id'=> $this->user()->customer_school_id,
+            'customer_school_id'=> $this->user()->customer_school_id,
             'gradation_id'=> $request->get('gradation_id'),
             'school_id'=> $request->get('school_id'),
         ];
@@ -40,7 +40,6 @@ class CorrectionController extends BaseApiController
      */
     protected function check_identity()
     {
-        return true;
         if($this->user()->identity==0) {
             $this->failed('对不起，您无权限执行此操作');
         }
@@ -60,6 +59,7 @@ class CorrectionController extends BaseApiController
 
         $options= $this->options($request);
         $options['paginate']= $request->get('paginate', ['current'=> 1, 'limit'=> 5]);
+
 
         $data= Correction::paper_exam_list($options);
         return $this->success($data);

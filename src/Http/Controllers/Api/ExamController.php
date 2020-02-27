@@ -49,6 +49,7 @@ class ExamController extends BaseApiController
         $options= [
             'is_submit'=> $request->get('is_submit')==1? true: false,
             'user_id'=> $this->user()->id,
+            'customer_school_id'=> $this->user()->customer_school_id,
             'exam_id'=> $request->get('exam_id'),
             'paper_uuid'=> $request->get('paper_uuid'),
             'questions'=> $request->get('questions')

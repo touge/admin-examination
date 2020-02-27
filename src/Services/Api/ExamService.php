@@ -303,6 +303,7 @@ class ExamService extends BaseService
             'paper_id'=> $paper_id,
             'user_id'=> $user->id,
             'user_name'=> $user->name,
+            'customer_school_id'=> $user->customer_school_id,
         ];
         $paper_exam= $this->create_paper_exam($options);
 
