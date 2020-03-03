@@ -9,6 +9,7 @@
 
 namespace Touge\AdminExamination\Services\Api;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Touge\AdminExamination\Models\PaperExams;
 use Touge\AdminExamination\Services\BaseService;
@@ -22,9 +23,9 @@ class MyService extends BaseService
 {
     /**
      * @param array $params
-     * @return array
+     * @return Collection
      */
-    public function fetch_list(array $params)
+    public function fetch_list(array $params): Collection
     {
         $selectFields= [
             'pe.id' ,'pe.paper_id' ,'pe.user_id' ,'pe.user_name' ,'pe.marker_id' ,'pe.marker_name',

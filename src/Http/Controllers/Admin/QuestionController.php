@@ -12,9 +12,9 @@ use Touge\AdminExamination\Models\Question as QuestionModal;
 
 use Touge\AdminExamination\Http\Controllers\Admin\Traits\QuestionResourceActions;
 use Touge\AdminExamination\Http\Controllers\BaseController;
-use Touge\AdminExamination\Services\Shows\Questions\Analyses;
-use Touge\AdminExamination\Services\Shows\Questions\Answers;
-use Touge\AdminExamination\Services\Shows\Questions\Options;
+use Touge\AdminExamination\Supports\Shows\Questions\Analyses;
+use Touge\AdminExamination\Supports\Shows\Questions\Answers;
+use Touge\AdminExamination\Supports\Shows\Questions\Options;
 use Touge\AdminExamination\Types\QuestionType;
 
 use Touge\AdminOverwrite\Grid\Grid;
@@ -42,7 +42,7 @@ class QuestionController extends BaseController
      */
     public function search(Request $request)
     {
-        $search_page_limit= 2;
+        $search_page_limit= 8;
 
         /**
          * 窗口

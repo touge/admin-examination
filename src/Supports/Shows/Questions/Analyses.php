@@ -6,11 +6,12 @@
  * Time: 16:04
  */
 
-namespace Touge\AdminExamination\Services\Shows\Questions;
+namespace Touge\AdminExamination\Supports\Shows\Questions;
 
 
 use Encore\Admin\Show\AbstractField;
 use Encore\Admin\Widgets\Table;
+
 use Touge\AdminExamination\Models\QuestionAnalysis;
 
 class Analyses extends AbstractField

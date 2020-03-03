@@ -23,11 +23,10 @@ class CorrectionService extends BaseService
     /**
      *
      * 当前所属用户的已答题的试卷列表
-     *
      * @param array $params
-     * @return Collection
+     * @return array
      */
-    public function paper_exam_list(array $params)
+    public function paper_exam_list(array $params): array
     {
 
         $paginate= $params['paginate'];

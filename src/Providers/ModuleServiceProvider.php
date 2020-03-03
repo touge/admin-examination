@@ -17,7 +17,7 @@ use Touge\AdminExamination\Providers\Api\PaperExamServiceProvider as ApiPaperExa
 
 class ModuleServiceProvider extends ServiceProvider
 {
-    protected $config_file= 'touge-admin-examination.php';
+    //protected $config_file= 'touge-admin-examination.php';
 
     /**
      * {@inheritdoc}
@@ -29,16 +29,11 @@ class ModuleServiceProvider extends ServiceProvider
         }
 
 
-        if( !file_exists(config_path($this->config_file))){
-            $this->loadConfig();
-        }
-
         if ($views = $extension->views()) {
             $this->loadViewsFrom($views, 'admin-examination');
         }
 
         if ($this->app->runningInConsole() && $assets = $extension->assets()) {
-            $this->publishes([__DIR__.'/../../config' => config_path()], 'touge-admin-examination-config');
             $this->publishes([__DIR__.'/../../resources/assets' => public_path('vendor/touge/admin-examination')], 'touge-admin-examination-assets');
         }
 
@@ -90,21 +85,7 @@ class ModuleServiceProvider extends ServiceProvider
         $this->app->register(ApiExamServiceProvider::class);
         $this->app->register(ApiMyServiceProvider::class);
         $this->app->register(ApiCorrectionServiceProvider::class);
-
-
-
-        ///////
         $this->app->register(ApiPaperServiceProvider::class);
         $this->app->register(ApiPaperExamServiceProvider::class);
-    }
-
-    /**
-     * load config file
-     * @param $file
-     */
-    protected function loadConfig(){
-        $key = substr($this->config_file, 0, -4);
-        $full_path= __DIR__ . '/../../config/' . $this->config_file;
-        $this->app['config']->set($key, array_merge_recursive(config($key, []), require $full_path));
     }
 }

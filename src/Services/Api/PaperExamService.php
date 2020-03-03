@@ -8,19 +8,6 @@
 
 namespace Touge\AdminExamination\Services\Api;
 
-//use App\Modules\Common\Services\BaseService;
-//use App\Modules\Exams\Facades\Paper;
-//use App\Modules\Exams\Models\ExamPaper;
-//use App\Modules\Exams\Models\ExamPaperExamQuestions;
-//use App\Modules\Exams\Models\ExamPaperExams;
-//use App\Modules\Exams\Models\ExamPaperQuestion;
-//use App\Modules\Exams\Models\ExamQuestion;
-//use App\Modules\Exams\Models\ExamQuestionAnalysis;
-//use App\Modules\Exams\Models\ExamQuestionAnswer;
-//use App\Modules\Exams\Models\ExamQuestionOption;
-//use App\Modules\Exams\Types\QuestionType;
-
-
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Touge\AdminExamination\Models\Paper;
@@ -242,7 +229,8 @@ class PaperExamService extends BaseService
      * @param $id
      * @return int
      */
-    public function destroy($id){
+    public function destroy($id)
+    {
         return PaperExams::destroy($id);
     }
 

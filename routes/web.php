@@ -24,9 +24,6 @@ Route::group([
     Route::resource("{gradation}/paper-group", 'Admin\PaperGroupController');
     Route::resource("{gradation}/paper" , 'Admin\PaperController');
 
-
-    Route::resource('member/teacher', 'Admin\Member\TeacherController');
-    Route::resource('member/student', 'Admin\Member\StudentController');
 });
 
 

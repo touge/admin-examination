@@ -18,20 +18,10 @@ use Touge\AdminExamination\Types\QuestionType;
 class PaperService extends BaseService
 {
 
-//"id": 69,
-//"category_id": 1,
-//"alias": "YKCGA1GI0VIH",
-//"title": "考试科目3",
-//"is_public": 0,
-//"gradation_id": 1,
-//"time_limit_enable": 0,
-//"time_limit_value": 90,
-//"pass_score": 5,
-//"total_score": 5,
-//"question_number": 1,
-//"created_at": "2019-12-28 13:52:08",
-//"updated_at": "2020-02-25 09:51:55"
-
+    /**
+     * @param array $params
+     * @return mixed
+     */
     public function fetch_list(Array $params)
     {
         $paper_list= Paper::where(['gradation_id' =>$params['gradation_id']])
@@ -42,13 +32,6 @@ class PaperService extends BaseService
         return $paper_list;
     }
 
-//"id": 1,
-//"parent_id": 0,
-//"gradation_id": 1,
-//"name": "企业培训",
-//"sort_order": 50,
-//"created_at": "2019-11-22 17:26:57",
-//"updated_at": "2020-02-24 19:29:31"
     /**
      * 当前请求的试卷分类
      *

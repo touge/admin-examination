@@ -186,7 +186,7 @@ class ExamService extends BaseService
      * @param $includeAnswer
      * @return array
      */
-    public function paper_questions($paper_id, $includeAnswer= false)
+    public function paper_questions($paper_id, $includeAnswer= false): array
     {
         $questions= [];
 
@@ -399,7 +399,7 @@ class ExamService extends BaseService
      * 试卷查询信息
      * @return array
      */
-    protected function paper_preview_filed()
+    protected function paper_preview_filed(): array
     {
         return [
             'alias as uuid',

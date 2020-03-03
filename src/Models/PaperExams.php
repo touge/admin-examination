@@ -28,16 +28,6 @@ class PaperExams extends BaseModel
     }
 
     /**
-     * 考试试卷列表的用户关联数据
-     *
-     * @return HasOne
-     */
-    public function user(): HasOne
-    {
-        //return $this->hasOne(SchoolMember::class, 'id', 'user_id');
-    }
-
-    /**
      * 单张考卷信息下面的答题数据
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
