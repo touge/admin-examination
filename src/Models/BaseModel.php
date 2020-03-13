@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\DB;
 
 class BaseModel extends Model
 {
+    public function __construct(array $attributes = [])
+    {
+        $connection= config('touge-admin-examination.database.connection');
+        $this->setConnection($connection);
+        parent::__construct($attributes);
+    }
+
     /**
      * 批量更新数据
      *

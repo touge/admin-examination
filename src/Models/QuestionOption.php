@@ -2,9 +2,8 @@
 
 namespace Touge\AdminExamination\Models;
 
-use Illuminate\Database\Eloquent\Model;
 
-class QuestionOption extends Model
+class QuestionOption extends BaseModel
 {
     protected $table= 'touge_question_options';
     //

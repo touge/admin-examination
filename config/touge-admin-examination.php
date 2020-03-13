@@ -14,5 +14,7 @@ return [
      * 当前用户学历阶段
      * undergraduate:本平,college:大专,secondary:中专
      */
-    'gradation'=> 'undergraduate',
+    'database'=> [
+        'connection'=> 'main_system',
+    ],
 ];

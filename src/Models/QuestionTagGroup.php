@@ -2,10 +2,9 @@
 
 namespace Touge\AdminExamination\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class QuestionTagGroup extends Model
+class QuestionTagGroup extends BaseModel
 {
     protected $table= 'touge_question_tag_groups';
     /**

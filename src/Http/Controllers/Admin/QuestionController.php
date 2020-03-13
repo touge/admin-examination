@@ -30,7 +30,6 @@ class QuestionController extends BaseController
     {
         $this->push_breadcrumb(['text'=> trans("admin-examination::question.module-name"), 'url'=> route('exams.question.index')]);
         parent::__construct();
-
     }
 
 

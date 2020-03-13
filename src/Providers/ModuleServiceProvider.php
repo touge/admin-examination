@@ -17,7 +17,7 @@ use Touge\AdminExamination\Providers\Api\PaperExamServiceProvider as ApiPaperExa
 
 class ModuleServiceProvider extends ServiceProvider
 {
-    //protected $config_file= 'touge-admin-examination.php';
+    protected $config_file= 'touge-admin-examination.php';
 
     /**
      * {@inheritdoc}
@@ -28,6 +28,9 @@ class ModuleServiceProvider extends ServiceProvider
             return ;
         }
 
+        if( !file_exists(config_path($this->config_file))){
+            $this->loadConfig();
+        }
 
         if ($views = $extension->views()) {
             $this->loadViewsFrom($views, 'admin-examination');
@@ -87,5 +90,12 @@ class ModuleServiceProvider extends ServiceProvider
         $this->app->register(ApiCorrectionServiceProvider::class);
         $this->app->register(ApiPaperServiceProvider::class);
         $this->app->register(ApiPaperExamServiceProvider::class);
+    }
+
+
+    protected function loadConfig(){
+        $key = substr($this->config_file, 0, -4);
+        $full_path= __DIR__ . '/../../config/' . $this->config_file;
+        $this->app['config']->set($key, array_merge_recursive(config($key, []), require $full_path));
     }
 }

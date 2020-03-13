@@ -2,9 +2,8 @@
 
 namespace Touge\AdminExamination\Models;
 
-use Illuminate\Database\Eloquent\Model;
 
-class QuestionCourse extends Model
+class QuestionCourse extends BaseModel
 {
     //
     protected $guarded= ['id'];

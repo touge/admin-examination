@@ -2,10 +2,9 @@
 
 namespace Touge\AdminExamination\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class QuestionTag extends Model
+class QuestionTag extends BaseModel
 {
     protected $table= 'touge_question_tags';
     public function group(): HasOne
