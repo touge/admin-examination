@@ -10,8 +10,6 @@ class Question extends BaseModel
     protected $table= 'touge_questions';
     protected $guarded= ['id'];
 
-
-
     /**
      * is_answer,option
      * @return HasMany

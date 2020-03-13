@@ -9,6 +9,7 @@
 namespace Touge\AdminExamination\Services;
 
 
+use Encore\Admin\Facades\Admin;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -108,7 +109,6 @@ class PaperService extends BaseService
         $paper= $params->paper;
         $options= [
             'category_id'=> $paper['category_id'],
-            'gradation_id'=> $paper['gradation_id'],
             'alias'=> $paper['alias'],
             'title'=> $paper['title'],
             'is_public'=> $paper['is_public'],
@@ -123,9 +123,6 @@ class PaperService extends BaseService
         }
         if(!$options['category_id']){
             $this->throw_error(__('admin-examination::paper.category-null'));
-        }
-        if(!$options['gradation_id']){
-            $this->throw_error(__('admin-examination::paper.gradation-null'));
         }
         if (!$options['total_score'] || intval($options['total_score']) <= 0){
             $this->throw_error(__('admin-examination::paper.score-error'));
@@ -147,10 +144,11 @@ class PaperService extends BaseService
     {
         $paper= Paper::findOrFail($params['id']);
 
-        $data= $this->create_data($params['gradation']);
+        $data= $this->create_data($params['customer_school_id']);
+
         $data['form']= [
             'category_id'=> $paper->category_id,
-            'gradation_id'=> $paper->gradation_id,
+            'customer_school_id'=> $params['customer_school_id'],
             'alias'=> $paper->alias,
             'title'=> $paper->title,
             'is_public'=> $paper->is_public,
@@ -172,15 +170,14 @@ class PaperService extends BaseService
      * admin.examination
      *
      * 创建新表单时数据
-     * @param $gradation
+     * @param $customer_school_id 学校客户id
      * @return array
      */
-    protected function create_data($gradation): array
+    protected function create_data($customer_school_id): array
     {
-        $gradation_id= GradationType::idx($gradation);
         $data['form']= [
             'category_id'=> 0,
-            'gradation_id'=> $gradation_id,
+            'customer_school_id'=> $customer_school_id,
             'alias'=> strtoupper(Str::random(12)),
             'title'=> '',
             'is_public'=> 0,
@@ -190,19 +187,11 @@ class PaperService extends BaseService
             'total_score'=> 100,
         ];
         $data['questions']= [];
-        $data['categories']= $this->categories($gradation_id)->toArray();
-        $data['gradations']= $this->gradations();
+        $data['categories']= $this->categories($customer_school_id)->toArray();
 
         return $data;
     }
 
-    /**
-     * @return array
-     */
-    public function gradations(): array
-    {
-        return GradationType::getList();
-    }
 
     /**
      * admin.examination
@@ -244,6 +233,8 @@ class PaperService extends BaseService
     public function store(Request $request)
     {
         $paper_options= $this->get_paper_options($request);
+
+        $paper_options['customer_school_id']= Admin::user()->customer_school_id;
         $paper_question_options= $request->get('paper_questions', []);
 
         DB::beginTransaction();
@@ -317,12 +308,12 @@ class PaperService extends BaseService
     public function get_form_data(array $params): array
     {
         $data= [];
+
         if (!$params['id']){
-            $data= $this->create_data($params['gradation']);
+            $data= $this->create_data($params['customer_school_id']);
         }else{
             $data= $this->edit_data($params);
         }
-        $data['gradation']= $params['gradation'];
         $data['id']= $params['id'];
 
         return $data;
@@ -333,15 +324,13 @@ class PaperService extends BaseService
      * admin.examination
      * 试卷分类
      *
-     * @param $gradation_id
+     * @param $customer_school_id 学院客户id
      * @return Collection
      */
-    public function categories($gradation_id): Collection
+    public function categories($customer_school_id): Collection
     {
-        $query= PaperCategory::select('id','name', 'gradation_id');
-        if($gradation_id > 0){
-            $query->where(['gradation_id'=> $gradation_id]);
-        }
+        $query= PaperCategory::select('id','name');
+        $query->where(['customer_school_id'=> $customer_school_id]);
         return $query->get();
     }
 }

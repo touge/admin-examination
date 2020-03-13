@@ -97,6 +97,10 @@ class TagController extends BaseController
     {
         $grid = new Grid(new QuestionTag());
 
+        $model= $grid->model();
+        $model->where(['customer_school_id'=> $this->customer_school_id()])
+            ->orderBy('id', 'desc');
+
         $grid->id('Id');
         $grid->column( 'group.title', __('admin-examination::question.tag.group-name'));
         $grid->column( 'title', __('admin-examination::question.tag.title'));
@@ -144,6 +148,7 @@ class TagController extends BaseController
     protected function form()
     {
         $form = new Form(new QuestionTag());
+        $form->hidden('customer_school_id')->default($this->customer_school_id());
 
         $tag_group_options= QuestionTagGroup::all()->pluck('title','id');
         $form->select('group_id', __('admin-examination::question.tag.group-name'))->options($tag_group_options);

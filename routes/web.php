@@ -19,10 +19,10 @@ Route::group([
     Route::resource("tag" , 'Admin\TagController');
     Route::resource("tag-group" , 'Admin\TagGroupController');
 
-    Route::resource("{gradation}/paper-category" , 'Admin\PaperCategoryController');
+    Route::resource("paper-category" , 'Admin\PaperCategoryController');
 
-    Route::resource("{gradation}/paper-group", 'Admin\PaperGroupController');
-    Route::resource("{gradation}/paper" , 'Admin\PaperController');
+    Route::resource("paper-group", 'Admin\PaperGroupController');
+    Route::resource("paper" , 'Admin\PaperController');
 
 });
 

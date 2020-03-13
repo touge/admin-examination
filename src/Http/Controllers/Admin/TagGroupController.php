@@ -93,8 +93,11 @@ class TagGroupController extends BaseController
     protected function grid()
     {
         $grid = new Grid(new QuestionTagGroup());
-        $grid->model()->orderBy('sort_order', 'ASC');
-        $grid->model()->orderBy('id', 'DESC');
+        $model= $grid->model();
+
+        $model->where(['customer_school_id'=> $this->customer_school_id()])
+            ->orderBy('sort_order', 'ASC')
+            ->orderBy('id', 'DESC');
 
         $grid->id('Id');
         $grid->title(__('admin-examination::question.tag-group.title'));
@@ -141,6 +144,7 @@ class TagGroupController extends BaseController
     {
         $form = new Form(new QuestionTagGroup());
 
+        $form->hidden('customer_school_id')->default($this->customer_school_id());
         $form->number('sort_order', __('admin-examination::question.tag-group.sort-order'))->default(50);
         $form->text('title', __('admin-examination::question.tag-group.title'));
 

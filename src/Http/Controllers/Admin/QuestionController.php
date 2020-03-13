@@ -92,7 +92,6 @@ class QuestionController extends BaseController
      */
     public function index(Content $content)
     {
-
         $this->set_breadcrumb($content);
         return $content
             ->header(__('admin-examination::module.name'))
@@ -107,10 +106,11 @@ class QuestionController extends BaseController
      */
     protected function grid()
     {
+
         $grid = new Grid(new QuestionModal());
+        $model= $grid->model();
 
-
-        $grid->model()->orderBy('id', 'DESC');
+        $model->where(['customer_school_id'=> $this->customer_school_id()])->orderBy('id','desc');
 
         $grid->id(__('admin-examination::question.id'));
         $grid->alias( __('admin-examination::question.alias'));
@@ -118,7 +118,7 @@ class QuestionController extends BaseController
         $grid->type(__('admin-examination::question.type'))->display(function($row){
             return QuestionType::text($row);
         });
-        $grid->updated_at(__('admin.updated_at'));
+        $grid->column('updated_at', __('admin.updated_at'));
 
         $grid->disableRowSelector()
             ->disableColumnSelector()

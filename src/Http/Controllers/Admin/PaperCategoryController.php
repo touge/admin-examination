@@ -2,32 +2,31 @@
 
 namespace Touge\AdminExamination\Http\Controllers\Admin;
 
+use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
 use Encore\Admin\Layout\Content;
-use Touge\AdminExamination\Http\Controllers\Admin\Traits\HasGradationResourceActions;
 use Touge\AdminExamination\Http\Controllers\BaseController;
 use Touge\AdminExamination\Models\PaperCategory;
-use Touge\AdminExamination\Types\GradationType;
 use Touge\AdminOverwrite\Grid\Displayers\Actions;
 use Touge\AdminOverwrite\Grid\Grid;
 
 class PaperCategoryController extends BaseController
 {
-    use HasGradationResourceActions;
+    use HasResourceActions;
+
 
     protected $header_text= '';
 
     public function __construct()
     {
-        $gradation= request('gradation', 'all');
         $this->push_breadcrumb(
             [
                 'text'=> trans("admin-examination::paper.categories.module-name"),
-                'url'=> route('exams.paper-category.index', ['gradation'=> $gradation])
+                'url'=> route('exams.paper-category.index')
             ]
         );
 
-        $this->header_text= $this->gradation_header($gradation) . __('admin-examination::paper.categories.module-name');
+        $this->header_text=  __('admin-examination::paper.categories.module-name');
     }
 
     /**
@@ -36,14 +35,14 @@ class PaperCategoryController extends BaseController
      * @param Content $content
      * @return Content
      */
-    public function index($gradation, Content $content)
+    public function index(Content $content)
     {
         $this->set_breadcrumb($content);
 
         return $content
             ->header($this->header_text)
             ->description(__('admin.list'))
-            ->body($this->grid($gradation));
+            ->body($this->grid());
     }
 
     /**
@@ -53,14 +52,14 @@ class PaperCategoryController extends BaseController
      * @param Content $content
      * @return Content
      */
-    public function edit($gradation, $id, Content $content)
+    public function edit($id, Content $content)
     {
         $this->push_breadcrumb(['text'=> trans("admin.edit")])
             ->set_breadcrumb($content);
         return $content
             ->header($this->header_text)
             ->description(__('admin.edit'))
-            ->body($this->form($gradation)->edit($id));
+            ->body($this->form()->edit($id));
     }
 
     /**
@@ -69,7 +68,7 @@ class PaperCategoryController extends BaseController
      * @param Content $content
      * @return Content
      */
-    public function create($gradation, Content $content)
+    public function create(Content $content)
     {
         $this->push_breadcrumb(['text'=> trans("admin.create")])
             ->set_breadcrumb($content);
@@ -77,7 +76,7 @@ class PaperCategoryController extends BaseController
         return $content
             ->header($this->header_text)
             ->description(__('admin.create'))
-            ->body($this->form($gradation));
+            ->body($this->form());
     }
 
     /**
@@ -85,16 +84,12 @@ class PaperCategoryController extends BaseController
      *
      * @return Grid
      */
-    protected function grid($gradation)
+    protected function grid()
     {
         $grid = new Grid(new PaperCategory());
         $modal= $grid->model();
 
-        $gradation_id= GradationType::idx($gradation);
-        if($gradation_id>0){
-            $modal->where(['gradation_id'=>$gradation_id]);
-        }
-        $modal->orderBy('id', 'DESC');
+        $modal->where(['customer_school_id'=> $this->customer_school_id()])->orderBy('id', 'DESC');
 
 
         $grid->id('Id');
@@ -119,20 +114,14 @@ class PaperCategoryController extends BaseController
      *
      * @return Form
      */
-    protected function form($gradation)
+    protected function form()
     {
         $form = new Form(new PaperCategory);
+        $form->hidden('customer_school_id')->default($this->customer_school_id());
 
         $form->text('name', __('admin.name'));
         $form->number('sort_order', __('admin.order'))->default(50);
 
-        $gradation_id= GradationType::idx($gradation);
-        if($gradation_id==0){
-            $gradation_options= $this->gradation_options();
-            $form->radio('gradation_id', GradationType::GRADATION_NAME)->options($gradation_options)->default(array_keys($gradation_options)[0]);
-        }else{
-            $form->hidden('gradation_id')->default($gradation_id);
-        }
 
         $form->disableViewCheck()->disableEditingCheck()->disableCreatingCheck();
         $form->tools(function(Form\Tools $tools){

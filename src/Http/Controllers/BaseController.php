@@ -11,6 +11,8 @@ use App\Http\Controllers\Controller;
 use Encore\Admin\Layout\Content;
 use Touge\AdminExamination\Types\GradationType;
 
+use Encore\Admin\Facades\Admin;
+
 class BaseController extends Controller
 {
     /**
@@ -27,7 +29,25 @@ class BaseController extends Controller
 
     public function __construct()
     {
-        $this->customer_school_id= env('ADMIN_CUSTOMER_SCHOOL_ID');
+        //$this->customer_school_id= env('ADMIN_CUSTOMER_SCHOOL_ID');
+    }
+
+    /**
+     * 当前用户信息
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
+    protected function user(){
+        return Admin::user();
+    }
+
+    /**
+     *
+     * 当前用户的校园客户ID
+     *
+     * @return mixed
+     */
+    protected function customer_school_id(){
+       return $this->user()->customer_school_id;
     }
 
     /**

@@ -7,7 +7,7 @@
 
             <div class="box-tools">
                 <div class="btn-group pull-right" style="margin-right: 5px">
-                    <a href="{{route('exams.paper.index', ['gradation'=> $data['gradation']])}}" class="btn btn-sm btn-default" title="{{__('admin.list')}}">
+                    <a href="{{route('exams.paper.index')}}" class="btn btn-sm btn-default" title="{{__('admin.list')}}">
                         <i class="fa fa-list"></i> {{__('admin.list')}}
                     </a>
                 </div>
@@ -22,33 +22,16 @@
                     </div>
                 </div>
 
-                {{--<div class="col-md-2">--}}
-                    {{--<div class="form-group">--}}
-                        {{--<label>{{__('admin-examination::paper.is-public')}}</label><br>--}}
-                        {{--<input type="checkbox" class="form-control locked la_checkbox" v-model="form.is_public" />--}}
-                        {{--<input type="hidden" class="locked" name="is_public" />--}}
-                    {{--</div>--}}
-                {{--</div>--}}
 
-                <div class="col-md-{{ $data['gradation'] === 'all'?3 :6}}">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label>{{__('admin-examination::paper.categories.module-name')}}</label>
                         <select v-select2="" class="form-control paper-categories" v-model="form.category_id">
                             <option v-for="(category, index) in categories" v-if="categories" v-bind:value="category.id">@{{ category.name }}</option>
                         </select>
                     </div>
-                    <input type="hidden" v-model="form.gradation_id">
+                    <input type="hidden" v-model="form.customer_school_id">
                 </div>
-                @if($data['gradation'] == 'all')
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>{{ \Touge\AdminExamination\Types\GradationType::GRADATION_NAME }}</label>
-                        <select v-select2="" class="form-control paper-gradation" v-model="form.gradation_id">
-                            <option v-for="(gradation, index) in gradations" v-if="gradations" v-bind:value="index">@{{ gradation.text }}</option>
-                        </select>
-                    </div>
-                </div>
-                @endif
             </div>
         </div>
     </div>
@@ -154,8 +137,8 @@
             return this
         }
         paper.question_modal= function(){
-            this.select_question_modal_id= 'paper-question-modal-' + helper.uuid(12);
-            helper.modal({
+            this.select_question_modal_id= 'paper-question-modal-' + utils.uuid(12);
+            utils.modal({
                 style: 'default',
                 title: '试题选择',
                 size: 'modal-lg',
@@ -188,7 +171,7 @@
                     form: {
                         id: this.params.form.id,
                         category_id: this.params.form.category_id,
-                        gradation_id: this.params.form.gradation_id,
+                        customer_school_id: this.params.form.customer_school_id,
                         alias: this.params.form.alias,
                         title: this.params.form.title,
                         is_public: this.params.form.is_public,
@@ -350,10 +333,9 @@
     $(function(){
         var data= {
             categories: <?php echo json_encode($data['categories'],JSON_UNESCAPED_UNICODE);?>,
-            gradations: <?php echo json_encode($data['gradations'],JSON_UNESCAPED_UNICODE);?>,
             form: {
                 category_id: "<?php echo $data['form']['category_id'];?>",
-                gradation_id: "<?php echo $data['form']['gradation_id'];?>",
+                customer_school_id: "<?php echo $data['form']['customer_school_id'];?>",
                 alias: "<?php echo $data['form']['alias'];?>",
                 title: "<?php echo $data['form']['title'];?>",
                 is_public: <?php echo $data['form']['is_public'];?>,
@@ -367,16 +349,16 @@
 
 
 
-        var action_url = "{{ $data['id']!=null ? route('exams.paper.update', ['paper'=>$data['id'], 'gradation'=> $data['gradation']]) : route('exams.paper.store', ['gradation'=> $data['gradation']]) }}"
+        var action_url = "{{ $data['id']!=null ? route('exams.paper.update', ['paper'=>$data['id']]) : route('exams.paper.store') }}"
         paper.parameters(data)
             .formAttributes({
                 action_url: action_url,
                 is_update: "{{ $data['id'] ? 1 : 0 }}"
             })
             .set_urls({
-                paper_list: "{{ route('exams.paper.index', ['gradation'=> $data['gradation']]) }}",
-                question_search: "{{route('exams.question.search', ['gradation'=> $data['gradation']])}}",
-                question_preview: "{{route('exams.question.previews', ['gradation'=> $data['gradation']])}}",
+                paper_list: "{{ route('exams.paper.index') }}",
+                question_search: "{{route('exams.question.search')}}",
+                question_preview: "{{route('exams.question.previews')}}",
             })
             .csrf_token("{{csrf_token()}}")
             .run()

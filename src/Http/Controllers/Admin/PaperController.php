@@ -25,11 +25,10 @@ class PaperController extends BaseController
      */
     public function __construct()
     {
-        $gradation= request('gradation', 'all');
         $this->push_breadcrumb(
             [
                 'text'=> trans("admin-examination::paper.module-name"),
-                'url'=> route('exams.paper.index', ['gradation'=> $gradation])
+                'url'=> route('exams.paper.index')
             ]
         );
         parent::__construct();
@@ -42,13 +41,13 @@ class PaperController extends BaseController
      * @param Content $content
      * @return Content
      */
-    public function index($gradation, Content $content)
+    public function index(Content $content)
     {
         $this->set_breadcrumb($content);
         return $content
             ->header(__('admin-examination::paper.module-name'))
             ->description(__('admin.list'))
-            ->body($this->grid($gradation));
+            ->body($this->grid());
     }
 
     /**
@@ -70,14 +69,14 @@ class PaperController extends BaseController
      * @param Content $content
      * @return Content
      */
-    public function edit($gradation, $id, Content $content)
+    public function edit($id, Content $content)
     {
         $this->push_breadcrumb(['text'=> trans("admin.edit")])
             ->set_breadcrumb($content);
         return $content
             ->header(__('admin-examination::paper.module-name'))
             ->description(__('admin.edit'))
-            ->body($this->form($gradation, $id));
+            ->body($this->form($id));
     }
 
     /**
@@ -86,7 +85,7 @@ class PaperController extends BaseController
      * @param Content $content
      * @return Content
      */
-    public function create($gradation, Content $content)
+    public function create(Content $content)
     {
         $this->push_breadcrumb(['text'=> trans("admin-examination::paper.paper-create")])
             ->set_breadcrumb($content);
@@ -94,7 +93,7 @@ class PaperController extends BaseController
         return $content
             ->header(__('admin-examination::paper.paper-create'))
             ->description(__('admin.create'))
-            ->body($this->form($gradation, 0));
+            ->body($this->form(0));
     }
 
 
@@ -104,16 +103,13 @@ class PaperController extends BaseController
      *
      * @return Grid
      */
-    protected function grid($gradation)
+    protected function grid()
     {
         $grid = new Grid(new PaperModel);
         $modal= $grid->model();
 
-        $gradation_id= GradationType::idx($gradation);
-        if($gradation_id>0){
-            $modal->where(['gradation_id'=>$gradation_id]);
-        }
-        $modal->orderBy('id', 'DESC');
+        $modal->where(['customer_school_id'=> $this->customer_school_id()])
+            ->orderBy('id', 'DESC');
 
 
         $grid->id('ID');
@@ -139,9 +135,9 @@ class PaperController extends BaseController
      * @param int $id
      * @return Form
      */
-    protected function form($gradation, $id)
+    protected function form($id)
     {
-        $options= ['id'=>$id, 'gradation'=>$gradation];
+        $options= ['id'=>$id, 'customer_school_id'=> $this->customer_school_id()];
         $data= Paper::get_form_data($options);
         return view('admin-examination::paper.form', compact('data'));
     }
@@ -172,7 +168,7 @@ class PaperController extends BaseController
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update($gradation, $id,Request $request)
+    public function update($id,Request $request)
     {
         $question= Paper::update($request ,$id);
 
@@ -195,7 +191,7 @@ class PaperController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($gradation, $id)
+    public function destroy($id)
     {
         $form= new Form(new PaperModel);
         if ($form->destroy($id)) {

@@ -296,6 +296,7 @@ class QuestionService
             'alias'=> $params['alias'],
             'type'=> $params['type'],
             'tags'=> $params['tags'],
+            'customer_school_id'=> $params['customer_school_id'],
         ];
         return $options;
     }

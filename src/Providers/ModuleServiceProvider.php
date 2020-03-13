@@ -38,13 +38,14 @@ class ModuleServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole() && $assets = $extension->assets()) {
             $this->publishes([__DIR__.'/../../resources/assets' => public_path('vendor/touge/admin-examination')], 'touge-admin-examination-assets');
+            $this->publishes([__DIR__.'/../../config' => config_path()], 'touge-admin-examination-config');
         }
 
         $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'admin-examination');
         $this->app->booted(function () {
 
             Admin::js('vendor/touge/admin-examination/vue.min.js');
-//            Admin::js('vendor/touge/admin-examination/vue.directive.js');
+            Admin::js('vendor/touge/admin-examination/vue.directive.js');
             Admin::js('vendor/touge/admin-examination/utils.js');
             AdminExamination::routes(__DIR__ . '/../../routes/web.php');
             static::api_routes(__DIR__ . '/../../routes/api.php');

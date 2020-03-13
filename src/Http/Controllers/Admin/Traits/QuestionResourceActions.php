@@ -8,6 +8,7 @@
 
 namespace Touge\AdminExamination\Http\Controllers\Admin\Traits;
 
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Illuminate\Http\Request;
 use Touge\AdminExamination\Supports\TagHelper;
@@ -42,7 +43,9 @@ trait QuestionResourceActions
      */
     public function store(Request $request)
     {
-        $question= Question::store($this->get_inputs($request));
+        $options= $this->get_inputs($request);
+        $options['customer_school_id']= $this->customer_school_id();
+        $question= Question::store($options);
 
         if(!$question){
             return response()->json([
