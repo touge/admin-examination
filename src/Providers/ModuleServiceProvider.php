@@ -44,7 +44,7 @@ class ModuleServiceProvider extends ServiceProvider
         $this->app->booted(function () {
 
             Admin::js('vendor/touge/admin-examination/vue.min.js');
-            Admin::js('vendor/touge/admin-examination/vue.directive.js');
+//            Admin::js('vendor/touge/admin-examination/vue.directive.js');
             Admin::js('vendor/touge/admin-examination/utils.js');
             AdminExamination::routes(__DIR__ . '/../../routes/web.php');
             static::api_routes(__DIR__ . '/../../routes/api.php');
