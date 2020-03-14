@@ -39,9 +39,9 @@ class CategoryController extends BaseApiController
     protected function options(Request $request){
         return [
             'user_id'=> $this->user()->id,
-            'custom_school_id'=> $this->user()->customer_school_id,
-            'gradation_id'=> $request->get('gradation_id'),
-            'school_id'=> $request->get('school_id'),
+            'customer_school_id'=> $this->user()->customer_school_id,
+//            'custom_school_id'=> $this->user()->customer_school_id,
+//            'school_id'=> $request->get('school_id'),
         ];
     }
 }

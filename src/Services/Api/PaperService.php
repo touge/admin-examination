@@ -24,7 +24,7 @@ class PaperService extends BaseService
      */
     public function fetch_list(Array $params)
     {
-        $paper_list= Paper::where(['gradation_id' =>$params['gradation_id']])
+        $paper_list= Paper::where(['customer_school_id' =>$params['customer_school_id']])
             ->select(['id','alias','category_id','title','question_number','total_score','time_limit_value','created_at'])
             ->orderBy('id' ,'desc')
             ->get();
@@ -39,8 +39,8 @@ class PaperService extends BaseService
      * @return mixed
      */
     public function categories(Array $params){
-        $categories= PaperCategory::where(['gradation_id'=>$params['gradation_id']])
-            ->select(['id', 'gradation_id', 'name', 'created_at'])
+        $categories= PaperCategory::where(['customer_school_id'=>$params['customer_school_id']])
+            ->select(['id', 'name', 'created_at'])
             ->get();
 
         return $categories;
@@ -57,7 +57,7 @@ class PaperService extends BaseService
             'alias as uuid',
             'title',
             'category_id',
-            'gradation_id',
+            'customer_school_id',
             'is_public',
             'time_limit_enable',
             'time_limit_value',

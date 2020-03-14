@@ -26,7 +26,6 @@ class MyController extends BaseApiController
     public function index(Request $request)
     {
         $options= $this->options($request);
-
         $data= My::fetch_list($options);
 
         return $this->success($data);
@@ -41,8 +40,6 @@ class MyController extends BaseApiController
         return [
             'user_id'=> $this->user()->id,
             'custom_school_id'=> $this->user()->customer_school_id,
-            'gradation_id'=> $request->get('gradation_id'),
-            'school_id'=> $request->get('school_id'),
             'paginate'=> $request->get('paginate', ['current'=> 1, 'limit'=> 5]),
         ];
     }

@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\DB;
 use Touge\AdminExamination\Models\Paper;
 use Touge\AdminExamination\Models\PaperExamQuestions;
 use Touge\AdminExamination\Models\PaperExams;
-use Touge\AdminExamination\Models\PaperGroupMemberRel;
 use Touge\AdminExamination\Models\PaperQuestion;
 use Touge\AdminExamination\Services\BaseService;
 
@@ -405,7 +404,7 @@ class ExamService extends BaseService
             'alias as uuid',
             'title',
             'category_id',
-            'gradation_id',
+            'customer_school_id',
             'is_public',
             'time_limit_enable',
             'time_limit_value',
@@ -429,7 +428,7 @@ class ExamService extends BaseService
             'p.title',
             'p.category_id',
             'p.is_public',
-            'p.gradation_id',
+            'p.customer_school_id',
             'p.time_limit_enable',
             'p.time_limit_value',
             'p.pass_score',

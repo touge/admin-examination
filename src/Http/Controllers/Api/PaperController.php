@@ -10,7 +10,7 @@ namespace Touge\AdminExamination\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Touge\AdminExamination\Facades\Api\Paper;
 use Touge\AdminExamination\Http\Controllers\BaseApiController;
-
+//1.*@rc
 
 class PaperController extends BaseApiController
 {
@@ -54,8 +54,7 @@ class PaperController extends BaseApiController
     protected function options(Request $request){
         return [
             'user_id'=> $this->user()->id,
-            'custom_school_id'=> $this->user()->customer_school_id,
-            'gradation_id'=> $request->get('gradation_id'),
+            'customer_school_id'=> $this->user()->customer_school_id,
             'school_id'=> $request->get('school_id'),
         ];
     }
