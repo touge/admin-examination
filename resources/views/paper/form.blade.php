@@ -346,7 +346,7 @@
             },
             paper_questions: [],
         }
-
+        console.log(data)
 
 
         var action_url = "{{ $data['id']!=null ? route('exams.paper.update', ['paper'=>$data['id']]) : route('exams.paper.store') }}"

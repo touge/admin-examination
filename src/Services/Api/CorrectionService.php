@@ -8,7 +8,6 @@
 
 namespace Touge\AdminExamination\Services\Api;
 
-use Illuminate\Support\Facades\DB;
 use Touge\AdminExamination\Models\PaperExams;
 use Touge\AdminExamination\Services\BaseService;
 

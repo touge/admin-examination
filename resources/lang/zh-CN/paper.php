@@ -18,6 +18,12 @@ return [
     'question-score'=> '题目总数',
     'question-list'=> '试题列表',
     'paper-create'=> '手动组卷',
+    'correction'=> [
+        'module-name'=> '批改试卷',
+        'user'=> '考生',
+        'is_judge'=> '是否阅卷',
+        'marking'=> '阅卷',
+    ],
     'categories'=> [
         'module-name'=> '试卷分类',
         'name'=> '名称',

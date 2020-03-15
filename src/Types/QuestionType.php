@@ -14,7 +14,7 @@ class QuestionType implements BaseType
 
     const TYPE_ENUM= [
         self::SINGLE_CHOICE => '单选题',
-        self::MULTI_CHOICES => '多选题目',
+        self::MULTI_CHOICES => '多选题',
         self::TRUE_FALSE => '判断题',
         self::FILL => '填空题',
         self::TEXT => '问答题',

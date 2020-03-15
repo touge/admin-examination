@@ -33,6 +33,7 @@ trait QuestionResourceActions
             'options'=> $request->get('options'),
             'analysis'=> $request->get('analysis'),
             'courses'=> $request->get('courses'),
+            'customer_school_id'=> $this->customer_school_id(),
         ];
         return $options;
     }
@@ -44,7 +45,6 @@ trait QuestionResourceActions
     public function store(Request $request)
     {
         $options= $this->get_inputs($request);
-        $options['customer_school_id']= $this->customer_school_id();
         $question= Question::store($options);
 
         if(!$question){

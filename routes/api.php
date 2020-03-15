@@ -9,9 +9,6 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Routing\Router;
 
-//Route::get('gradation', 'GradationController@index')->name('gradation.index');
-//Route::get('group/{group}/papers', 'GroupPaperController@papers')->name('group.papers');
-
 /**
  * 试卷分类及分组
  */

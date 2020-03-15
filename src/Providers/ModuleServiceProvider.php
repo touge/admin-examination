@@ -15,6 +15,7 @@ use Touge\AdminExamination\Providers\Api\PaperServiceProvider as ApiPaperService
 use Touge\AdminExamination\Providers\Api\PaperExamServiceProvider as ApiPaperExamServiceProvider;
 
 
+
 class ModuleServiceProvider extends ServiceProvider
 {
     protected $config_file= 'touge-admin-examination.php';
@@ -82,6 +83,7 @@ class ModuleServiceProvider extends ServiceProvider
     {
         $this->app->register(QuestionServiceProvider::class);
         $this->app->register(PaperServiceProvider::class);
+        $this->app->register(PaperExamServiceProvider::class);
 
         /**
          * api

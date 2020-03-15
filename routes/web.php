@@ -24,6 +24,16 @@ Route::group([
     Route::resource("paper-group", 'Admin\PaperGroupController');
     Route::resource("paper" , 'Admin\PaperController');
 
+    Route::resource("paper" , 'Admin\PaperController');
+
+
+    /**
+     * 批改试卷
+     */
+    Route::get('correction', 'Admin\CorrectionController@index')->name('correction.index');
+    Route::get('correction/{correction}/marking', 'Admin\CorrectionController@marking')->name('correction.marking');
+    Route::post('correction/update/{correction}', 'Admin\CorrectionController@update')->name('correction.update');
+
 });
 
 

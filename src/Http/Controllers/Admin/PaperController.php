@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Touge\AdminExamination\Facades\Paper;
 use Touge\AdminExamination\Http\Controllers\BaseController;
 use Touge\AdminExamination\Models\Paper as PaperModel;
-use Touge\AdminExamination\Types\GradationType;
 use Touge\AdminOverwrite\Grid\Displayers\Actions;
 use Touge\AdminOverwrite\Grid\Grid;
 
