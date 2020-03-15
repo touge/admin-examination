@@ -132,7 +132,7 @@ class PaperExamService extends BaseService
         $data= [
             'paper_id'=> $paper->id,
             'paper_alias'=> $paper->alias,
-            'paper_category'=> $paper->category_id,
+            'paper_category'=> $paper->category->name,
             'paper_title'=> $paper->title,
             'paper_is_public'=> $paper->is_public,
             'paper_time_limit_enable'=> $paper->time_limit_enable,

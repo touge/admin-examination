@@ -23,6 +23,7 @@ return [
         'user'=> '考生',
         'is_judge'=> '是否阅卷',
         'marking'=> '阅卷',
+        'got_score'=> '得分',
     ],
     'categories'=> [
         'module-name'=> '试卷分类',

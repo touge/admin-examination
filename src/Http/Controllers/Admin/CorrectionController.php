@@ -58,47 +58,10 @@ class CorrectionController extends BaseController
         $previous= $this->previous();
         $body= view('admin-examination::correction.marking', compact('paper_exam' ,'id', 'previous'));
 
-
         return $content
             ->header(__('admin-examination::paper.correction.module-name'))
             ->description(__('admin-examination::paper.correction.marking'))
             ->body($body);
-    }
-
-
-
-    /**
-     * Get current resource route url.
-     *
-     * @param int $slice
-     *
-     * @return string
-     */
-    public function resource($slice = -2): string
-    {
-        $segments = explode('/', trim(\request()->getUri(), '/'));
-        if ($slice !== 0) {
-            $segments = array_slice($segments, 0, $slice);
-        }
-        return implode('/', $segments);
-    }
-
-
-    /**
-     * Add field for store redirect url after update or store.
-     *
-     * @return void
-     */
-    protected function previous()
-    {
-        $previous = URL::previous();
-        if (!$previous || $previous === URL::current()) {
-            return;
-        }
-
-        if (Str::contains($previous, url($this->resource()))) {
-            return $previous;
-        }
     }
 
     /**
@@ -148,7 +111,6 @@ class CorrectionController extends BaseController
     {
         $grid = new Grid(new PaperExams());
         $modal= $grid->model();
-        $grid->paginate(1);
 
         $modal->where(['customer_school_id'=> $this->customer_school_id()])
             ->orderBy('id', 'DESC');
@@ -156,11 +118,20 @@ class CorrectionController extends BaseController
         $grid->id('ID');
         $grid->column('paper.title', __('admin-examination::paper.title'));
         $grid->column('user_name', __('admin-examination::paper.correction.user'));
-        $grid->column('is_judge', __('admin-examination::paper.correction.is_judge'));
+        $grid->column('is_judge', __('admin-examination::paper.correction.is_judge'))->using([
+            0 => '未阅',
+            1 => '已阅',
+        ], '未知')->dot([
+            0 => 'danger',
+            1 => 'success',
+        ], 'warning');
 
-        $grid->column('paper.time_limit_value' ,__('admin-examination::paper.time-limit-enable'))->states();
+        $grid->column('score' ,__('admin-examination::paper.correction.got_score'))->label('primary');
+        $grid->column('paper.time_limit_enable' ,__('admin-examination::paper.time-limit-enable'))->icon([
+            0 => 'toggle-off',
+            1 => 'toggle-on',
+        ], $default = '1');;
         $grid->column('paper.pass_score', __('admin-examination::paper.pass-score'));
-        $grid->column('paper.total_score', __('admin-examination::paper.total-score'));
 
         $grid->disableRowSelector()
             ->disableCreateButton()
@@ -182,5 +153,40 @@ class CorrectionController extends BaseController
         });
 
         return $grid;
+    }
+
+
+    /**
+     * Get current resource route url.
+     *
+     * @param int $slice
+     *
+     * @return string
+     */
+    protected function resource($slice = -2): string
+    {
+        $segments = explode('/', trim(\request()->getUri(), '/'));
+        if ($slice !== 0) {
+            $segments = array_slice($segments, 0, $slice);
+        }
+        return implode('/', $segments);
+    }
+
+
+    /**
+     * Add field for store redirect url after update or store.
+     *
+     * @return void
+     */
+    protected function previous()
+    {
+        $previous = URL::previous();
+        if (!$previous || $previous === URL::current()) {
+            return;
+        }
+
+        if (Str::contains($previous, url($this->resource()))) {
+            return $previous;
+        }
     }
 }
