@@ -11,8 +11,7 @@
  */
 return [
     /**
-     * 当前用户学历阶段
-     * undergraduate:本平,college:大专,secondary:中专
+     * 数据库链接配置，需要在database.connections中进行配置，参考database.connections.mysql配置
      */
     'database'=> [
         'connection'=> 'main_system',

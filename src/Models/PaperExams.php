@@ -61,4 +61,34 @@ class PaperExams extends BaseModel
             ->orderBy('pe.id','desc')
             ->get();
     }
+
+
+    /**
+     * 老师批改的试卷列表
+     *
+     * @param $params
+     * @return mixed
+     */
+    public function correction_paper_exams($params){
+        $paginate= $params['paginate'];
+
+        $selectFields= [
+            'pe.id' ,'pe.paper_id' ,'pe.user_id' ,'pe.user_name' ,'pe.marker_id' ,'pe.marker_name',
+            'pe.is_judge' ,'pe.updated_at as market_time' ,'pe.score',
+
+            'p.title as paper_title' , 'p.category_id', 'p.alias as paper_alias', 'p.question_number', 'p.total_score' ,'p.time_limit_value'
+        ];
+
+
+
+        $exam_list= $this->setTable($this->table . ' as pe')
+            ->leftJoin($this->paper_table . ' as p', 'p.id', '=', 'pe.paper_id')
+            ->select($selectFields)
+            ->where(['pe.customer_school_id'=> $params['customer_school_id']])
+            ->orderBy('pe.id','desc')
+
+            ->paginate($paginate['limit'], null, null, $paginate['current']);
+        return $exam_list;
+
+    }
 }

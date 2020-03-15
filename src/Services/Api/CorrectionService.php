@@ -8,8 +8,8 @@
 
 namespace Touge\AdminExamination\Services\Api;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Touge\AdminExamination\Models\PaperExams;
 use Touge\AdminExamination\Services\BaseService;
 
 /**
@@ -28,26 +28,10 @@ class CorrectionService extends BaseService
      */
     public function paper_exam_list(array $params): array
     {
-
         $paginate= $params['paginate'];
 
-        $selectFields= [
-            'pe.id' ,'pe.paper_id' ,'pe.user_id' ,'pe.user_name' ,'pe.marker_id' ,'pe.marker_name',
-            'pe.is_judge' ,'pe.updated_at as market_time' ,'pe.score',
-
-            'p.title as paper_title' , 'p.category_id', 'p.alias as paper_alias', 'p.question_number', 'p.total_score' ,'p.time_limit_value'
-        ];
-
-        $query= DB::table('touge_paper_exams as pe');
-        $query->leftJoin('touge_papers as p', 'p.id' ,'=', 'pe.paper_id');
-        $query->select($selectFields);
-
-        $query->where(['pe.customer_school_id'=> $params['customer_school_id']]);
-
-
-        $query->orderBy('pe.id' ,'DESC');
-
-        $exam_list= $query->paginate($paginate['limit'], null, null, $paginate['current']);
+        $paper_exams = new PaperExams();
+        $exam_list= $paper_exams->correction_paper_exams($params);
 
         $data= [
             'exam_list'=> $exam_list->items(),
