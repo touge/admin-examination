@@ -111,7 +111,8 @@
                         @endif
                         @if($question['type']==3)
                             <div class="input-group-addon">考生答案</div>
-                            <input type="text" style="color: blue;" class="form-control" value="{{chr(ord('A') + $question['paper_exam']['answer'][0])}}" disabled>
+                            {{dump($question['paper_exam'])}}
+                            {{--<input type="text" style="color: blue;" class="form-control" value="{{chr(ord('A') + $question['paper_exam']['answer'][0])}}" disabled>--}}
                         @endif
                         @if($question['type']==4)
                             <div class="input-group-addon">考生答案</div>

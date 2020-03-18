@@ -16,6 +16,7 @@ use Touge\AdminExamination\Facades\PaperExam;
 use Touge\AdminExamination\Http\Controllers\BaseController;
 use Encore\Admin\Layout\Content;
 use Touge\AdminExamination\Models\PaperExams;
+use Touge\AdminOverwrite\Form;
 use Touge\AdminOverwrite\Grid\Grid;
 use Touge\AdminOverwrite\Grid\Displayers\Actions;
 
@@ -99,6 +100,32 @@ class CorrectionController extends BaseController
 
         admin_toastr(trans('admin.save_succeeded'));
         return redirect($url);
+    }
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $form= new Form(new PaperExams());
+        if ($form->destroy($id)) {
+            $data = [
+                'status'  => true,
+                'message' => trans('admin.delete_succeeded'),
+            ];
+        } else {
+            $data = [
+                'status'  => false,
+                'message' => trans('admin.delete_failed'),
+            ];
+        }
+
+        return response()->json($data);
     }
 
 
