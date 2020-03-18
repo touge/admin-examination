@@ -38,6 +38,7 @@ return [
     'gradation-null'=> '阶段不能为空',
     'score-error'=> '试卷总分未设置或者设置错误',
     'pass-score-error'=> '及格分数未设置或者设置错误',
+    'answer_null'=> '无答案',
 
 
     'group'=> [

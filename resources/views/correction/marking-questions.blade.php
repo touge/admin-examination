@@ -106,23 +106,21 @@
                     <div class="input-group" style="margin-bottom:5px;">
                         @if(in_array($question['type'], [1,2]))
                             <div class="input-group-addon">考生答案</div>
-                            @php $input_val=[]; foreach($question['paper_exam']['answer'] as $answer){ array_push($input_val, chr(ord('A')+$answer));} @endphp
-                            <input type="text" style="color: blue;" class="form-control" value="{{ implode(',', $input_val) }}" disabled>
+                            <input type="text" style="color: blue;" class="form-control" value="{{format_single_choice_view($question['paper_exam']['answer'])}}" disabled>
                         @endif
                         @if($question['type']==3)
                             <div class="input-group-addon">考生答案</div>
-                            {{dump($question['paper_exam'])}}
-                            {{--<input type="text" style="color: blue;" class="form-control" value="{{chr(ord('A') + $question['paper_exam']['answer'][0])}}" disabled>--}}
+                            <input type="text" style="color: blue;" class="form-control" value="{{format_true_false_view($question['paper_exam']['answer'])}}" disabled>
                         @endif
                         @if($question['type']==4)
                             <div class="input-group-addon">考生答案</div>
-                            @foreach($question['answer'] as $amswer)
-                                <input type="text" style="color: blue;" class="form-control" value="{{$amswer}}" disabled>
+                            @foreach($question['paper_exam']['answer'] as $answer)
+                                <input type="text" style="color: blue;" class="form-control" value="{{format_fill_view($answer)}}" disabled>
                             @endforeach
                         @endif
                         @if($question['type']==5)
                             <div class="input-group">考生答案</div>
-                                <textarea style="color: blue;width: 300px;height:150px;" class="form-control" value="" disabled>{{$question['paper_exam']['answer'][0]}}</textarea>
+                                <textarea style="color: blue;width: 300px;height:150px;" class="form-control" value="" disabled>{{format_text_view($question['paper_exam']['answer'])}}</textarea>
                         @endif
                     </div>
 

@@ -33,6 +33,8 @@ class ModuleServiceProvider extends ServiceProvider
             $this->loadConfig();
         }
 
+        require_once(__DIR__ . '/../Helper.php');
+
         if ($views = $extension->views()) {
             $this->loadViewsFrom($views, 'admin-examination');
         }

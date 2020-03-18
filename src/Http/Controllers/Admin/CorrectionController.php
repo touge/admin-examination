@@ -55,6 +55,7 @@ class CorrectionController extends BaseController
             ->set_breadcrumb($content);
 
         $paper_exam= PaperExam::fetch_one($id);
+//        dd($paper_exam['questions']);
 
         $previous= $this->previous();
         $body= view('admin-examination::correction.marking', compact('paper_exam' ,'id', 'previous'));
