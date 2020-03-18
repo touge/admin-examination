@@ -6,7 +6,6 @@
  * Time: 17:30
  */
 
-$answer_null ="无答案";
 
 if(!function_exists('format_single_choice_view')){
     /**
@@ -18,8 +17,6 @@ if(!function_exists('format_single_choice_view')){
      */
     function format_single_choice_view(Array $answers)
     {
-        //__('admin-examination::paper.correction.marking')
-
         if(count($answers) ==0 ) return __("admin-examination::paper.answer_null");
         dd($answers);
         $input_val=[];
@@ -48,7 +45,6 @@ if(!function_exists('format_fill_view')){
     /**
      * 格式化输出到模板中的题目答案
      * 填空题(type:4)
-     *
      * @param $answer
      * @return array|string|null
      */
@@ -63,7 +59,6 @@ if(!function_exists('format_text_view')){
     /**
      * 格式化输出到模板中的题目答案
      * 问答题(type:5)
-     *
      * @param array $answers
      * @return array|string|null
      */
