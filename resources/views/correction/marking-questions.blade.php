@@ -115,11 +115,12 @@
                         @if($question['type']==4)
                             <div class="input-group-addon">考生答案</div>
                             @foreach($question['paper_exam']['answer'] as $answer)
-                                <input type="text" style="color: blue;" class="form-control" value="{{format_fill_view($answer)}}" disabled>
+                                <input type="text" style="color: blue;" class="form-control" value="{{format_fill_view($answer)==null ?'无答案' :$answer}}" disabled>
                             @endforeach
                         @endif
                         @if($question['type']==5)
                             <div class="input-group">考生答案</div>
+{{--                            {{dd($question['paper_exam']['answer'])}}--}}
                                 <textarea style="color: blue;width: 300px;height:150px;" class="form-control" value="" disabled>{{format_text_view($question['paper_exam']['answer'])}}</textarea>
                         @endif
                     </div>

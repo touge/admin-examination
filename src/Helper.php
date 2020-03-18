@@ -69,7 +69,7 @@ if(!function_exists('format_text_view')){
      */
     function format_text_view($answers)
     {
-        if(!$answers[0] ) return __("admin-examination::paper.answer_null");
+        if( count($answers) == 0 ) return __("admin-examination::paper.answer_null");
         return $answers[0];
     }
 }
