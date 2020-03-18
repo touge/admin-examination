@@ -74,7 +74,6 @@ if(!function_exists('format_text_view')){
     }
 }
 
-
 if(!function_exists('formatNumberToLetter')){
     /**
      * 数字转字母
