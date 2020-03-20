@@ -18,7 +18,6 @@ if(!function_exists('format_single_choice_view')){
     function format_single_choice_view(Array $answers)
     {
         if(count($answers) ==0 ) return __("admin-examination::paper.answer_null");
-        dd($answers);
         $input_val=[];
         foreach($answers as $answer){
             array_push($input_val, formatNumberToLetter($answer));
