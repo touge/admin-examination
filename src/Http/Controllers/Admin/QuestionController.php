@@ -7,6 +7,7 @@ use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Str;
 use Touge\AdminExamination\Facades\Question as QuestionService;
 use Touge\AdminExamination\Models\Question as QuestionModal;
 
@@ -17,6 +18,7 @@ use Touge\AdminExamination\Supports\Shows\Questions\Answers;
 use Touge\AdminExamination\Supports\Shows\Questions\Options;
 use Touge\AdminExamination\Types\QuestionType;
 
+use Touge\AdminOverwrite\Grid\Displayers\Actions;
 use Touge\AdminOverwrite\Grid\Grid;
 
 class QuestionController extends BaseController
@@ -114,7 +116,9 @@ class QuestionController extends BaseController
 
         $grid->id(__('admin-examination::question.id'));
         $grid->alias( __('admin-examination::question.alias'));
-        $grid->question(__('admin-examination::question.title'));
+        $grid->question(__('admin-examination::question.title'))->display(function($val){
+            return Str::limit($val,30, '...');
+        });
         $grid->type(__('admin-examination::question.type'))->display(function($row){
             return QuestionType::text($row);
         });
@@ -124,6 +128,10 @@ class QuestionController extends BaseController
             ->disableColumnSelector()
             ->disableFilter()
             ->disableExport();
+
+        $grid->actions(function(Actions $actions){
+           $actions->disableView();
+        });
 
         return $grid;
     }
