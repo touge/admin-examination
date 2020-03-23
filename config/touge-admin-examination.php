@@ -14,6 +14,6 @@ return [
      * 数据库链接配置，需要在database.connections中进行配置，参考database.connections.mysql配置
      */
     'database'=> [
-        'connection'=> 'main_system',
+        'connection'=> env('TOUGE_EXAMINATION_DB_CONNECTION', 'main_system'),
     ],
 ];
