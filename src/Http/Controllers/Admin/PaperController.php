@@ -109,7 +109,8 @@ class PaperController extends BaseController
         $modal= $grid->model();
 
         $modal->where(['customer_school_id'=> $this->customer_school_id()])
-            ->orderBy('id', 'DESC');
+            ->orderByDesc('expired_at')
+            ->orderByDesc('id');
 
 
         $grid->id('ID');

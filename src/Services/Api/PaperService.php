@@ -9,6 +9,7 @@
 namespace Touge\AdminExamination\Services\Api;
 
 
+use Illuminate\Support\Carbon;
 use Touge\AdminExamination\Models\Paper;
 use Touge\AdminExamination\Models\PaperCategory;
 use Touge\AdminExamination\Models\PaperQuestion;
@@ -21,10 +22,14 @@ class PaperService extends BaseService
     /**
      * @param array $params
      * @return mixed
+     * @throws \Exception
      */
     public function fetch_list(Array $params)
     {
-        $paper_list= Paper::where(['customer_school_id' =>$params['customer_school_id']])
+        $paper_list= Paper::where([
+            'customer_school_id' =>$params['customer_school_id'],
+        ])
+            ->whereDate('expired_at','>=', new Carbon())
             ->select(['id','alias','category_id','title','question_number','total_score','time_limit_value','created_at'])
             ->orderBy('id' ,'desc')
             ->get();
