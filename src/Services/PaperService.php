@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use mysql_xdevapi\Exception;
 use Touge\AdminExamination\Models\Paper;
 use Touge\AdminExamination\Models\PaperCategory;
 use Touge\AdminExamination\Models\PaperExams;
@@ -30,6 +31,7 @@ use Touge\AdminExamination\Types\GradationType;
 class PaperService extends BaseService
 {
     /**
+     * 暂保留两个版本，之后删除
      * admin.examination
      *
      * 存入试卷试题
@@ -40,9 +42,6 @@ class PaperService extends BaseService
      * @throws \Touge\AdminExamination\Exceptions\ResponseFailedException
      */
     protected function save_paper_questions(array $questions, Paper $paper){
-        if(!$questions){
-            $this->throw_error(__('admin-examination::paper.question-null'));
-        }
 
         $paper_question_map = [];
         $paper_score_total= 0;
@@ -116,6 +115,7 @@ class PaperService extends BaseService
             'time_limit_value'=> $paper['time_limit_value'],
             'pass_score'=> $paper['pass_score'],
             'total_score'=> $paper['total_score'],
+            'expired_at'=> $paper['expired_at'],
         ];
 
         if(!$options['title']){
@@ -156,6 +156,7 @@ class PaperService extends BaseService
             'time_limit_value'=> $paper->time_limit_value,
             'pass_score'=> $paper->pass_score,
             'total_score'=> $paper->total_score,
+            'expired_at'=> $paper->expired_at,
         ];
 
         $data['paper_questions']= [];
@@ -171,7 +172,9 @@ class PaperService extends BaseService
      *
      * 创建新表单时数据
      * @param $customer_school_id 学校客户id
+     *
      * @return array
+     * @throws \Exception
      */
     protected function create_data($customer_school_id): array
     {
@@ -185,6 +188,7 @@ class PaperService extends BaseService
             'time_limit_value'=> 90,
             'pass_score'=> 60,
             'total_score'=> 100,
+            'expired_at'=> (new Carbon())->addWeek(),
         ];
         $data['questions']= [];
         $data['categories']= $this->categories($customer_school_id)->toArray();
@@ -237,25 +241,41 @@ class PaperService extends BaseService
         $paper_options['customer_school_id']= Admin::user()->customer_school_id;
         $paper_question_options= $request->get('paper_questions', []);
 
+        /**
+         * 试卷试题输入检测
+         */
+        $check_paper_questions= $this->check_paper_questions($paper_question_options, $paper_options['total_score']);
+        if ($check_paper_questions){
+            $this->throw_error($check_paper_questions);
+        }
+
         DB::beginTransaction();
-        /**
-         * 试卷主题
-         */
-        $options['question_number']= count($paper_question_options);
-        $paper= Paper::create($paper_options);
+        try{
+            /**
+             * 试卷主题
+             */
+            $options['question_number']= count($paper_question_options);
+            $paper= Paper::create($paper_options);
 
-        /**
-         * 试卷试题列表
-         */
-        $paper_questions= $this->save_paper_questions($paper_question_options, $paper);
-
-        if($paper && $paper_questions){
+            foreach($paper_question_options as $index=>$question){
+                $row= [
+                    'paper_id'=>$paper->id,
+                    'question_id'=>$question['question_id'],
+                    'score'=> $question['score']
+                ];
+                $res= PaperQuestion::create($row);
+                if(!$res){
+                    return false;
+                }
+            }
             DB::commit();
             return $paper;
+        }catch (\Exception $exception){
+            DB::rollBack();
+            return false;
         }
-        DB::rollBack();
-        return false;
     }
+
 
 
     /**
@@ -273,28 +293,111 @@ class PaperService extends BaseService
         $paper_options= $this->get_paper_options($request);
         $paper_question_options= $request->get('paper_questions', []);
 
-        DB::beginTransaction();
+        $check_paper_questions= $this->check_paper_questions($paper_question_options, $paper_options['total_score']);
+        if ($check_paper_questions){
+            $this->throw_error($check_paper_questions);
+        }
 
         /**
          * 数据更新
          */
         $paper= Paper::findOrFail($id);
-        $paper['question_number']= count($paper_question_options);
-        $updated= $paper->update($paper_options);
 
-        /**
-         * 删除解析，添加解析
-         */
-        $paper->questions()->delete();
-        $paper_questions= $this->save_paper_questions($paper_question_options, $paper);
+        DB::beginTransaction();
+        try{
+            $paper['question_number']= count($paper_question_options);
+            $paper->update($paper_options);
 
-        if($updated && $paper_questions){
+            /**
+             * 删除解析，添加解析
+             */
+            $paper->questions()->delete();
+
+            foreach($paper_question_options as $index=>$question){
+                $row= [
+                    'paper_id'=>$paper->id,
+                    'question_id'=>$question['question_id'],
+                    'score'=> $question['score']
+                ];
+                PaperQuestion::create($row);
+            }
             DB::commit();
             return $paper;
+        }catch (\Exception $exception){
+            DB::rollBack();
+            return false;
         }
-        DB::rollBack();
+
     }
 
+    /**
+     * 检测录入的试题
+     *
+     * @param array $questions
+     * @param $paper_score_total
+     * @return bool|string
+     */
+    protected function check_paper_questions(array $questions, $paper_score_total){
+        $error_message= '';
+        $error= false;
+
+        if(!$questions){
+            $error_message= __('admin-examination::paper.question-null');
+            return $error_message;
+        }
+
+
+        $paper_question_map = [];
+        $question_score_total= 0;
+
+        foreach($questions as $index=>$question) {
+            /**
+             * 判定试题是否重复
+             */
+            if (isset($paper_question_map[$question['question_id']])) {
+                $error_message= '第 ' . ($index + 1) . ' 题 与第 ' . $paper_question_map[$question['question_id']] . ' 题重复';
+                $error= true;
+                break;
+            }
+
+
+            /**
+             * 判定试题是否存在
+             */
+            if (empty($question['question_id'])) {
+                $error_message= '第'. ($index+1) . '题不存在';
+                $error= true;
+                break;
+            }
+
+            /**
+             * 判定试题分值是否存在
+             * 是否为数值
+             * 是否<=0
+             */
+            if (empty($question['score']) || ($question_score = intval($question['score'])) <=0 ) {
+                $error= true;
+                $error_message= '第'. ($index+1) . '题分值设置错误';
+                break;
+            }
+            $question_score_total+= $question_score;
+            $paper_question_map[$question['question_id']]= $index+1;
+        }
+
+        if($error){
+            return $error_message;
+        }
+
+        /**
+         * 判定试题分值相加是否为试卷总分相等
+         */
+        if ($paper_score_total != $question_score_total)
+        {
+            $error_message= '总分设置' . $paper_score_total . '和计算' . $question_score_total . '不相等';
+            return $error_message;
+        }
+        return $error;
+    }
 
     /**
      * admin.examination

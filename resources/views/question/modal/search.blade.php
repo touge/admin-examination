@@ -60,6 +60,7 @@
                     <td style="width: 10%" class="text-center">
                     <input type="checkbox" v-model="question_select_ids" v-bind:value="item.id">
                     </td>
+                    <td>@{{ item.id }}</td>
                     <td> <span class="label label-info">@{{ types[item.type] }}</span> @{{ item.question }}</td>
                 </tr>
                 </tbody>

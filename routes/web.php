@@ -15,6 +15,16 @@ Route::group([
     Route::match(['get', 'post'], 'question/search', 'Admin\QuestionController@search')->name('question.search');
     Route::post("question/previews" , 'Admin\QuestionController@previews')->name('question.previews');
 
+
+    /**
+     * 导入题库
+     */
+    Route::get("question/import" , 'Admin\QuestionImportController@import');
+    Route::post("question/import" , 'Admin\QuestionImportController@upload');
+
+    /**
+     * 题库操作
+     */
     Route::resource("question" , 'Admin\QuestionController');
     Route::resource("tag" , 'Admin\TagController');
     Route::resource("tag-group" , 'Admin\TagGroupController');

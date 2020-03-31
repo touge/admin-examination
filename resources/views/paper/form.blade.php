@@ -4,7 +4,7 @@
     <div class="box box-default">
         <div class="box-header with-border">
             <h3 class="box-title"></h3>
-
+            @if($is_used)<span style="color:red">注意，当前试卷已经有入库试卷，仅允许修改 "截止时间" !!！</span>@endif
             <div class="box-tools">
                 <div class="btn-group pull-right" style="margin-right: 5px">
                     <a href="{{route('exams.paper.index')}}" class="btn btn-sm btn-default" title="{{__('admin.list')}}">
@@ -15,23 +15,43 @@
         </div>
         <div class="box-body">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label>{{__('admin-examination::paper.title')}}</label>
-                        <input type="text" v-model="form.title" class="form-control" placeholder="{{__('admin-examination::paper.title')}}">
+                        <label>{{__('admin-examination::paper.title')}} @{{ is_used }}</label>
+                        <input type="text" v-model="form.title" v-if="is_used" class="form-control" disabled placeholder="{{__('admin-examination::paper.title')}}">
+                        <input type="text" v-model="form.title" v-else class="form-control" placeholder="{{__('admin-examination::paper.title')}}">
                     </div>
                 </div>
 
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label>{{__('admin-examination::paper.categories.module-name')}}</label>
-                        <select v-select2="" class="form-control paper-categories" v-model="form.category_id">
+                        <select v-select2="" v-if="is_used" disabled class="form-control paper-categories" v-model="form.category_id">
+                            <option v-for="(category, index) in categories" v-if="categories" v-bind:value="category.id">@{{ category.name }}</option>
+                        </select>
+
+                        <select v-select2="" v-else class="form-control paper-categories" v-model="form.category_id">
                             <option v-for="(category, index) in categories" v-if="categories" v-bind:value="category.id">@{{ category.name }}</option>
                         </select>
                     </div>
                     <input type="hidden" v-model="form.customer_school_id">
                 </div>
+
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>{{__('admin-examination::paper.expired-at')}}</label>
+
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
+                                <input style="width: 160px" type="text" id="expired_at" name="expired_at"  v-bind:value="form.expired_at" class="form-control expired_at" placeholder="{{__('admin-examination::paper.expired-at')}}" />
+                            </div>
+
+                    </div>
+                    <input type="hidden" v-model="form.customer_school_id">
+                </div>
+
             </div>
         </div>
     </div>
@@ -44,7 +64,8 @@
                             <label>分数设置</label>
                             <div class="input-group">
                                 <span class="input-group-addon">总分</span>
-                                <input type="text" class="form-control name" placeholder="输入总分" v-model="form.total_score">
+                                <input type="text" class="form-control name" v-if="is_used" disabled placeholder="输入总分" v-model="form.total_score">
+                                <input type="text" class="form-control name" v-else placeholder="输入总分" v-model="form.total_score">
                                 <span class="input-group-addon">分</span>
                             </div>
                         </div>
@@ -52,7 +73,8 @@
                             <label>&nbsp;</label>
                             <div class="input-group">
                                 <span class="input-group-addon">及格分</span>
-                                <input type="text" class="form-control name" placeholder="输入及格分" v-model="form.pass_score">
+                                <input type="text" class="form-control name" v-if="is_used" disabled placeholder="输入及格分" v-model="form.pass_score">
+                                <input type="text" class="form-control name" v-else placeholder="输入及格分" v-model="form.pass_score">
                                 <span class="input-group-addon">分</span>
                             </div>
                         </div>
@@ -63,7 +85,8 @@
                         <div class="col-md-4">
                             <label>答题时间限制</label>
                             <div class="input-group">
-                                <input type="checkbox" class="form-control locked la_checkbox" v-model="form.time_limit_enable" />
+                                <input type="checkbox" v-if="is_used" disabled class="form-control locked la_checkbox" v-model="form.time_limit_enable" />
+                                <input type="checkbox" v-else class="form-control locked la_checkbox" v-model="form.time_limit_enable" />
                                 <input type="hidden" class="locked" name="time_limit_enable"/>
                             </div>
                         </div>
@@ -87,11 +110,12 @@
                 <label>{{__('admin-examination::paper.question-list')}}</label>
             </div>
 
+
             <div class="box box-default" v-if="paper_questions.length>0">
                 @include('admin-examination::paper.questions')
             </div>
 
-            <div style="margin:10px 0;"><a href="javascript:;" onclick="paper.question_modal()"><i class="fa fa-plus"></i> 添加试题</a> </div>
+            <div style="margin:10px 0;" v-if="!is_used"><a href="javascript:;" onclick="paper.question_modal()"><i class="fa fa-plus"></i> 添加试题</a> </div>
 
         </div>
 
@@ -167,7 +191,7 @@
                 el: "#paperEditor",
                 data: {
                     categories: this.params.categories,
-                    gradations: this.params.gradations,
+                    is_used: this.params.is_used,
                     form: {
                         id: this.params.form.id,
                         category_id: this.params.form.category_id,
@@ -179,6 +203,7 @@
                         time_limit_value: this.params.form.time_limit_value,
                         pass_score: this.params.form.pass_score,
                         total_score: this.params.form.total_score,
+                        expired_at: this.params.form.expired_at,
                     },
                     paper_questions: this.params.paper_questions
                 },
@@ -290,6 +315,8 @@
                             }
                         }
 
+                        this.form.expired_at= $("#expired_at").val()
+
                         /**
                          * 错误逻辑判断均放在后台
                         */
@@ -297,6 +324,8 @@
                             paper: this.form,
                             paper_questions: brief_question,
                         }
+
+                        console.log(data)
 
 
                         utils.swal.loading({
@@ -333,6 +362,7 @@
     $(function(){
         var data= {
             categories: <?php echo json_encode($data['categories'],JSON_UNESCAPED_UNICODE);?>,
+            is_used: <?php echo $is_used;?>,
             form: {
                 category_id: "<?php echo $data['form']['category_id'];?>",
                 customer_school_id: "<?php echo $data['form']['customer_school_id'];?>",
@@ -343,6 +373,7 @@
                 time_limit_value: <?php echo $data['form']['time_limit_value'];?>,
                 pass_score: <?php echo $data['form']['pass_score'];?>,
                 total_score: <?php echo $data['form']['total_score'];?>,
+                expired_at: "<?php echo $data['form']['expired_at'];?>",
             },
             paper_questions: [],
         }
@@ -364,7 +395,6 @@
             .run()
 
         $(".paper-categories").select2({"allowClear":true, minimumResultsForSearch:-1 })
-        $(".paper-gradation").select2({"allowClear":true, minimumResultsForSearch:-1 })
 
         $('.locked.la_checkbox').bootstrapSwitch({
             size:'small',
@@ -380,6 +410,9 @@
                 paper.vueFormAttribute(name, value)
             }
         });
+
+        $('.expired_at').parent().datetimepicker({"format":"YYYY-MM-DD HH:mm:ss","locale":"zh-CN","allowInputToggle":true});
+
     })
 
 </script>

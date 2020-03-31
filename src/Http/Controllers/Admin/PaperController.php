@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Touge\AdminExamination\Facades\Paper;
 use Touge\AdminExamination\Http\Controllers\BaseController;
 use Touge\AdminExamination\Models\Paper as PaperModel;
+use Touge\AdminExamination\Models\PaperExams;
 use Touge\AdminOverwrite\Grid\Displayers\Actions;
 use Touge\AdminOverwrite\Grid\Grid;
 
@@ -117,12 +118,19 @@ class PaperController extends BaseController
         $grid->time_limit_enable(__('admin-examination::paper.time-limit-enable'))->states();
         $grid->pass_score(__('admin-examination::paper.pass-score'));
         $grid->total_score(__('admin-examination::paper.total-score'));
+        $grid->expired_at(__('admin-examination::paper.expired-at'));
 
         $grid->disableRowSelector()
             ->disableColumnSelector()
             ->disableFilter()
             ->disableExport();
         $grid->actions(function(Actions $actions){
+
+//            $exam_total= PaperExams::where(['paper_id'=> $actions->row->id])->count();
+//            dump($exam_total);
+//            if($exam_total > 0){
+//                $actions->disableEdit();
+//            }
            $actions->disableView();
         });
 
@@ -138,7 +146,12 @@ class PaperController extends BaseController
     {
         $options= ['id'=>$id, 'customer_school_id'=> $this->customer_school_id()];
         $data= Paper::get_form_data($options);
-        return view('admin-examination::paper.form', compact('data'));
+
+        $is_used= 0;
+        if($id > 0){
+            $is_used= PaperExams::where(['paper_id'=> $id])->count() >0 ?1 :0;
+        }
+        return view('admin-examination::paper.form', compact('data', 'is_used'));
     }
 
 
@@ -192,6 +205,21 @@ class PaperController extends BaseController
      */
     public function destroy($id)
     {
+
+        /**
+         * 检测关联数据
+         */
+        $paper_exams= PaperExams::where(['paper_id'=> $id])->count();
+
+        if($paper_exams>0){
+            $response = [
+                'status'  => false,
+                'message' => "试卷已经被使用，不允许删除！<br>请编辑截止日期使其失效，在前台隐藏。",
+            ];
+            return response()->json($response);
+        }
+
+
         $form= new Form(new PaperModel);
         if ($form->destroy($id)) {
             $data = [

@@ -13,6 +13,7 @@ return [
     'is-public'=> '是否公开',
     'time-limit-enable'=> '时间限制',
     'time-limit-value'=> '限制时间',
+    'expired-at'=> '截止时间',
     'pass-score'=> '及格分',
     'total-score'=> '总分',
     'question-score'=> '题目总数',

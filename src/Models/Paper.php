@@ -29,4 +29,8 @@ class Paper extends BaseModel
     {
         return $this->hasOne(PaperCategory::class, 'id', 'category_id');
     }
+
+    public function exams(){
+        return $this->hasMany(PaperExams::class, 'id', 'paper_id');
+    }
 }

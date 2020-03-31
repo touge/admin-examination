@@ -3,7 +3,7 @@
         <tr>
             <td colspan="2">
                 <div class="question-alert">
-                    <span style="float: right;">
+                    <span style="float: right;"  v-if="!is_used">
                         <a href="javascript:;" title="向上移动" v-show="index>0" v-on:click="questionMoveUp(index)"><i class="fa fa-arrow-up"></i></a>&nbsp;&nbsp;
                         <a href="javascript:;" title="向下移动" v-show="index+1<paper_questions.length" v-on:click="questionMoveDown(index)"><i class="fa fa-arrow-down"></i></a>&nbsp;&nbsp;
                         <a href="javascript:;" title="移动到指定位置" v-on:click="questionMoveTo(index)"><i class="fa fa-crosshairs"></i></a>&nbsp;&nbsp;
@@ -73,7 +73,8 @@
                     <div class="input-group-addon">
                         分值
                     </div>
-                    <input type="text" class="form-control" v-model="question.score">
+                    <input type="text" v-if="is_used" disabled class="form-control" v-model="question.score">
+                    <input type="text" v-else class="form-control" v-model="question.score">
                 </div>
             </td>
         </tr>
